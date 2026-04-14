@@ -84,6 +84,7 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
     private ChatMessageEntity toMessageEntity(ChatMessage m) {
         ChatMessageEntity e = new ChatMessageEntity();
         e.setId(m.getId());
+        e.setSchoolId(m.getSchoolId());
         e.setSessionId(m.getSessionId());
         e.setRole(m.getRole());
         e.setContent(m.getContent());
@@ -96,6 +97,7 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
     private ChatMessage toMessageModel(ChatMessageEntity e) {
         return new ChatMessage(
                 e.getId(),
+                e.getSchoolId(),
                 e.getSessionId(),
                 e.getRole(),
                 e.getContent(),

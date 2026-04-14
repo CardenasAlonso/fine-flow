@@ -59,6 +59,7 @@ public class AiChatService implements AiChatUseCase {
                                                     // Save user message
                                                     ChatMessage userMsg =
                                                             buildMessage(
+                                                                    schoolId,
                                                                     sessionId,
                                                                     "user",
                                                                     userMessage,
@@ -103,6 +104,7 @@ public class AiChatService implements AiChatUseCase {
                                                                                         ChatMessage
                                                                                                 assistantMsg =
                                                                                                         buildMessage(
+                                                                                                                schoolId,
                                                                                                                 sessionId,
                                                                                                                 "assistant",
                                                                                                                 answer,
@@ -131,6 +133,7 @@ public class AiChatService implements AiChatUseCase {
                                                                                         return repo
                                                                                                 .saveMessage(
                                                                                                         buildMessage(
+                                                                                                                schoolId,
                                                                                                                 sessionId,
                                                                                                                 "assistant",
                                                                                                                 fallback,
@@ -152,6 +155,7 @@ public class AiChatService implements AiChatUseCase {
     }
 
     private ChatMessage buildMessage(
+            String schoolId,
             String sessionId,
             String role,
             String content,
@@ -159,6 +163,7 @@ public class AiChatService implements AiChatUseCase {
             BigDecimal confidence) {
         ChatMessage m = new ChatMessage();
         m.setId(UuidGenerator.generate());
+        m.setSchoolId(schoolId);
         m.setSessionId(sessionId);
         m.setRole(role);
         m.setContent(content);

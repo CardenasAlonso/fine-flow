@@ -2,6 +2,7 @@ package pe.edu.fineflow.academic.application.service;
 
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageScheduleVersionUseCase;
 import pe.edu.fineflow.academic.domain.model.ScheduleVersion;
@@ -11,6 +12,7 @@ import pe.edu.fineflow.common.util.UuidGenerator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ManageScheduleVersionService implements ManageScheduleVersionUseCase {
@@ -36,6 +38,11 @@ public class ManageScheduleVersionService implements ManageScheduleVersionUseCas
                 .findById(id)
                 .flatMap(
                         existing -> {
+                            if ("ACTIVE".equals(existing.getStatus())) {
+                                return Mono.error(
+                                        new IllegalStateException(
+                                                "No se puede modificar un horario activo"));
+                            }
                             existing.setVersionName(updated.getVersionName());
                             existing.setAcademicPeriodId(updated.getAcademicPeriodId());
                             existing.setNotes(updated.getNotes());
@@ -52,9 +59,20 @@ public class ManageScheduleVersionService implements ManageScheduleVersionUseCas
                 .findById(id)
                 .flatMap(
                         existing -> {
+                            if (!"DRAFT".equals(existing.getStatus())
+                                    && !"REVIEW".equals(existing.getStatus())) {
+                                return Mono.error(
+                                        new IllegalStateException(
+                                                "Solo se pueden publicar horarios en estado DRAFT o"
+                                                        + " REVIEW"));
+                            }
                             existing.setStatus("ACTIVE");
                             existing.setPublishedAt(Instant.now());
                             existing.setUpdatedAt(Instant.now());
+                            log.info(
+                                    "Publishing schedule version: {} school: {}",
+                                    existing.getId(),
+                                    existing.getSchoolId());
                             return repository.save(existing);
                         });
     }
@@ -67,13 +85,24 @@ public class ManageScheduleVersionService implements ManageScheduleVersionUseCas
                         existing -> {
                             existing.setStatus("ARCHIVED");
                             existing.setUpdatedAt(Instant.now());
+                            log.info("Archiving schedule version: {}", existing.getId());
                             return repository.save(existing);
                         });
     }
 
     @Override
     public Mono<Void> delete(String id) {
-        return repository.deleteById(id);
+        return repository
+                .findById(id)
+                .flatMap(
+                        existing -> {
+                            if ("ACTIVE".equals(existing.getStatus())) {
+                                return Mono.error(
+                                        new IllegalStateException(
+                                                "No se puede eliminar un horario activo"));
+                            }
+                            return repository.deleteById(id);
+                        });
     }
 
     @Override

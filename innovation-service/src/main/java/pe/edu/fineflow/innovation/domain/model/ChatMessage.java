@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatMessage {
     private String id;
+    private String schoolId;
     private String sessionId;
     private String role;
     private String content;

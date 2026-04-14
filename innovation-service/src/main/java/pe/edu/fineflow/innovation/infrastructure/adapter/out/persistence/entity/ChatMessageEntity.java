@@ -16,6 +16,9 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ChatMessageEntity {
     @Id private String id;
 
+    @Column("SCHOOL_ID")
+    private String schoolId;
+
     @Column("SESSION_ID")
     private String sessionId;
 

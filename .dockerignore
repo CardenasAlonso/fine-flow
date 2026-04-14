@@ -1,13 +1,80 @@
+# Build artifacts
 **/target/
+**/*.class
+**/*.jar
+**/*.war
+
+# Git
 **/.git/
 **/.gitignore
-**/node_modules/
+**/.gitattributes
+
+# IDE
 **/.idea/
 **/*.iml
-**/Dockerfile*
-**/docker-compose*.yml
-**/.env*
+**/.vscode/
+**/*.iml
+
+# Node/Frontend (if exists separately)
+**/node_modules/
+**/package*.json
+**/webpack*.js
+**/.npm/
+
+# Documentation
+**/*.md
 **/README.md
 **/AGENTS.md
-**/fineflow-saas.log
-**/.vscode/
+**/LICENSE
+
+# Docker
+**/Dockerfile*
+**/.dockerignore
+**/docker-compose*.yml
+**/docker-entrypoint*.sh
+
+# Environment & Config
+**/.env*
+**/.env
+**/*.env
+**/secrets/
+**/credentials*
+
+# Logs
+**/*.log
+**/logs/
+
+# Temp files
+**/*.tmp
+**/*.temp
+**/.DS_Store
+**/Thumbs.db
+
+# Database scripts (usually not needed in container)
+**/*.sql
+**/migrations/
+**/scripts/
+
+# Wallet files (large, usually mounted at runtime)
+**/Wallet*/
+**/wallet/
+
+# Test files
+**/src/test/
+**/src/it/
+**/*Test.java
+**/*Tests.java
+**/.mvn/wrapper/
+**/test-results/
+**/surefire-reports/
+
+# Coverage
+**/jacoco/
+**/coverage/
+**/.codecov/
+
+# CI/CD
+**/.github/
+**/.gitlab-ci.yml
+**/.travis.yml
+**/Jenkinsfile

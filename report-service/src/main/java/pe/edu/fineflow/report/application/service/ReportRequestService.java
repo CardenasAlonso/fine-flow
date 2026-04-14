@@ -1,7 +1,7 @@
 package pe.edu.fineflow.report.application.service;
 
 import java.time.Instant;
-import org.springframework.scheduling.annotation.Async;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.exception.ResourceNotFoundException;
 import pe.edu.fineflow.common.tenant.TenantContext;
@@ -13,7 +13,9 @@ import pe.edu.fineflow.report.infrastructure.generator.ExcelReportGenerator;
 import pe.edu.fineflow.report.infrastructure.generator.PdfReportGenerator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+@Slf4j
 @Service
 public class ReportRequestService implements RequestReportUseCase {
 
@@ -50,29 +52,62 @@ public class ReportRequestService implements RequestReportUseCase {
                         });
     }
 
-    @Async
     public void processAsync(ReportJob job) {
-        // Procesamiento asíncrono en thread pool separado
-        try {
-            repo.updateStatus(job.getId(), "PROCESSING", 10, null).subscribe();
-            byte[] bytes;
-            if ("PDF".equals(job.getFormat())) {
-                bytes = pdfGen.generate(job);
-            } else {
-                bytes = excelGen.generate(job);
-            }
-            String path =
-                    "/reports/"
-                            + job.getSchoolId()
-                            + "/"
-                            + job.getId()
-                            + "."
-                            + job.getFormat().toLowerCase();
-            // In real impl: save bytes to file storage (S3/MinIO)
-            repo.updateStatus(job.getId(), "COMPLETED", 100, path).subscribe();
-        } catch (Exception ex) {
-            repo.updateStatus(job.getId(), "FAILED", 0, null).subscribe();
-        }
+        log.info(
+                "Starting async report generation: jobId={} type={}",
+                job.getId(),
+                job.getReportType());
+
+        repo.updateStatus(job.getId(), "PROCESSING", 10, null)
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSuccess(
+                        v -> log.debug("Status updated to PROCESSING for job: {}", job.getId()))
+                .doOnError(
+                        e ->
+                                log.error(
+                                        "Failed to update status to PROCESSING for job {}: {}",
+                                        job.getId(),
+                                        e.getMessage()))
+                .subscribe();
+
+        Mono.fromCallable(
+                        () -> {
+                            byte[] bytes;
+                            if ("PDF".equals(job.getFormat())) {
+                                bytes = pdfGen.generate(job);
+                            } else {
+                                bytes = excelGen.generate(job);
+                            }
+                            String path =
+                                    "/reports/"
+                                            + job.getSchoolId()
+                                            + "/"
+                                            + job.getId()
+                                            + "."
+                                            + job.getFormat().toLowerCase();
+                            return path;
+                        })
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(path -> repo.updateStatus(job.getId(), "COMPLETED", 100, path))
+                .doOnSuccess(v -> log.info("Report generated successfully: jobId={}", job.getId()))
+                .doOnError(
+                        e -> {
+                            log.error(
+                                    "Report generation failed for job {}: {}",
+                                    job.getId(),
+                                    e.getMessage());
+                            repo.updateStatus(job.getId(), "FAILED", 0, null)
+                                    .subscribeOn(Schedulers.boundedElastic())
+                                    .doOnError(
+                                            err ->
+                                                    log.error(
+                                                            "Failed to update status to FAILED for"
+                                                                    + " job {}: {}",
+                                                            job.getId(),
+                                                            err.getMessage()))
+                                    .subscribe();
+                        })
+                .subscribe();
     }
 
     @Override
@@ -102,7 +137,6 @@ public class ReportRequestService implements RequestReportUseCase {
                                 return Mono.error(
                                         new IllegalStateException("El reporte aún no está listo."));
                             }
-                            // In real impl: read file from storage
                             return Mono.just(new byte[0]);
                         });
     }

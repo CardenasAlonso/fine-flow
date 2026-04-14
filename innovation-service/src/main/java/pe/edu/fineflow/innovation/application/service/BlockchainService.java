@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.event.AttendanceRecordedEvent;
 import pe.edu.fineflow.common.event.EventBus;
@@ -16,6 +17,7 @@ import pe.edu.fineflow.innovation.domain.port.out.BlockchainRepositoryPort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class BlockchainService implements BlockchainUseCase {
 
@@ -44,7 +46,12 @@ public class BlockchainService implements BlockchainUseCase {
                                                 + "\",\"status\":\""
                                                 + e.getStatus()
                                                 + "\"}"))
-                .subscribe(block -> {}, error -> {});
+                .subscribe(
+                        block -> {},
+                        error ->
+                                log.error(
+                                        "Blockchain attendance event failed: {}",
+                                        error.getMessage()));
 
         eventBus.stream(ScoreRegisteredEvent.class)
                 .flatMap(
@@ -60,7 +67,10 @@ public class BlockchainService implements BlockchainUseCase {
                                                 + "\",\"score\":"
                                                 + e.getScore()
                                                 + "}"))
-                .subscribe(block -> {}, error -> {});
+                .subscribe(
+                        block -> {},
+                        error ->
+                                log.error("Blockchain score event failed: {}", error.getMessage()));
 
         eventBus.stream(StudentEnrolledEvent.class)
                 .flatMap(
@@ -76,7 +86,12 @@ public class BlockchainService implements BlockchainUseCase {
                                                 + "\",\"sectionId\":\""
                                                 + e.getSectionId()
                                                 + "\"}"))
-                .subscribe(block -> {}, error -> {});
+                .subscribe(
+                        block -> {},
+                        error ->
+                                log.error(
+                                        "Blockchain enrollment event failed: {}",
+                                        error.getMessage()));
     }
 
     @Override
@@ -98,6 +113,7 @@ public class BlockchainService implements BlockchainUseCase {
                                             + schoolId
                                             + eventType
                                             + entityId
+                                            + (entityType != null ? entityType : "")
                                             + payloadJson
                                             + previousHash;
                             String hash = sha256(data);
