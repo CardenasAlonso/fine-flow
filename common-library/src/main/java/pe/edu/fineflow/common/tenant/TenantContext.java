@@ -1,5 +1,6 @@
 package pe.edu.fineflow.common.tenant;
 
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pe.edu.fineflow.common.security.UserPrincipal;
@@ -19,6 +20,14 @@ public final class TenantContext {
                                 : Mono.error(
                                         new IllegalStateException(
                                                 "school_id no encontrado en TenantContext")));
+    }
+
+    public static Mono<Optional<String>> getSchoolIdOptional() {
+        return Mono.deferContextual(
+                ctx ->
+                        ctx.hasKey(SCHOOL_ID_KEY)
+                                ? Mono.just(Optional.of(ctx.<String>get(SCHOOL_ID_KEY)))
+                                : Mono.just(Optional.empty()));
     }
 
     public static Mono<UserPrincipal> getPrincipal() {

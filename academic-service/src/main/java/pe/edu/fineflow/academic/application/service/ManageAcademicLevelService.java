@@ -1,8 +1,10 @@
 package pe.edu.fineflow.academic.application.service;
 
 import java.time.Instant;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 import pe.edu.fineflow.academic.application.port.in.ManageAcademicLevelUseCase;
 import pe.edu.fineflow.academic.domain.model.AcademicLevel;
 import pe.edu.fineflow.academic.domain.port.out.AcademicLevelRepositoryPort;
@@ -33,16 +35,15 @@ public class ManageAcademicLevelService implements ManageAcademicLevelUseCase {
     public Mono<AcademicLevel> update(String id, AcademicLevel updated) {
         return TenantContext.getSchoolId()
                 .flatMap(
-                        schoolId ->
-                                repository
-                                        .findById(id)
-                                        .flatMap(
-                                                existing -> {
-                                                    existing.setName(updated.getName());
-                                                    existing.setOrderNum(updated.getOrderNum());
-                                                    existing.setIsActive(updated.getIsActive());
-                                                    return repository.save(existing);
-                                                }));
+                        schoolId -> repository
+                                .findById(id)
+                                .flatMap(
+                                        existing -> {
+                                            existing.setName(updated.getName());
+                                            existing.setOrderNum(updated.getOrderNum());
+                                            existing.setIsActive(updated.getIsActive());
+                                            return repository.save(existing);
+                                        }));
     }
 
     @Override

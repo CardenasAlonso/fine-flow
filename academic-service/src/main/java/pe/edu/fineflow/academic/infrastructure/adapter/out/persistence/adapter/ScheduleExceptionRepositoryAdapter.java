@@ -28,12 +28,16 @@ public class ScheduleExceptionRepositoryAdapter implements ScheduleExceptionRepo
 
     @Override
     public Flux<ScheduleException> findAllByClassScheduleId(String classScheduleId) {
-        return repository.findAllByClassScheduleId(classScheduleId).map(mapper::toDomain);
+        return repository
+                .findAllByClassScheduleIdAndIsActive(classScheduleId, 1)
+                .map(mapper::toDomain);
     }
 
     @Override
     public Flux<ScheduleException> findAllByDate(String schoolId, LocalDate date) {
-        return repository.findAllBySchoolIdAndExceptionDate(schoolId, date).map(mapper::toDomain);
+        return repository
+                .findAllBySchoolIdAndExceptionDateAndIsActive(schoolId, date, 1)
+                .map(mapper::toDomain);
     }
 
     @Override
