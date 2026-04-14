@@ -6,7 +6,10 @@ import reactor.core.publisher.Mono;
 
 public interface AcademicLevelRepositoryPort {
     Mono<AcademicLevel> save(AcademicLevel level);
+
     Mono<AcademicLevel> findById(String id);
+
     Flux<AcademicLevel> findAllBySchoolId(String schoolId);
+
     Mono<Void> deleteById(String id);
 }

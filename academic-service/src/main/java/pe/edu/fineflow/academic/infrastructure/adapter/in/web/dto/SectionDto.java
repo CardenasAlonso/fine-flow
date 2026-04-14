@@ -13,8 +13,9 @@ public class SectionDto {
     public static class Create {
         @NotBlank(message = "El nombre es requerido")
         private String name;
-        @NotNull(message = "La capacidad máxima es requerida")
-        private Integer maxCapacity;
+
+        @NotNull(message = "La capacidad máxima es requerida") private Integer maxCapacity;
+
         @NotBlank(message = "El año escolar es requerido")
         private String schoolYearId;
     }
@@ -25,8 +26,9 @@ public class SectionDto {
     public static class Update {
         @NotBlank(message = "El nombre es requerido")
         private String name;
-        @NotNull(message = "La capacidad máxima es requerida")
-        private Integer maxCapacity;
+
+        @NotNull(message = "La capacidad máxima es requerida") private Integer maxCapacity;
+
         private String tutorId;
         private Integer isActive;
     }

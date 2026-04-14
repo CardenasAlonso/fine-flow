@@ -1,5 +1,6 @@
 package pe.edu.fineflow.profile.application.service;
 
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.exception.ResourceNotFoundException;
@@ -11,8 +12,6 @@ import pe.edu.fineflow.profile.domain.port.out.GuardianRepositoryPort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-
 @Service
 @RequiredArgsConstructor
 public class ManageGuardianService implements ManageGuardianUseCase {
@@ -20,28 +19,32 @@ public class ManageGuardianService implements ManageGuardianUseCase {
 
     @Override
     public Mono<Guardian> create(Guardian guardian) {
-        return TenantContext.getSchoolId().flatMap(schoolId -> {
-            guardian.setId(UuidGenerator.generate());
-            guardian.setSchoolId(schoolId);
-            guardian.setCreatedAt(Instant.now());
-            return repository.save(guardian);
-        });
+        return TenantContext.getSchoolId()
+                .flatMap(
+                        schoolId -> {
+                            guardian.setId(UuidGenerator.generate());
+                            guardian.setSchoolId(schoolId);
+                            guardian.setCreatedAt(Instant.now());
+                            return repository.save(guardian);
+                        });
     }
 
     @Override
     public Mono<Guardian> update(String id, Guardian updated) {
-        return repository.findById(id)
-            .switchIfEmpty(Mono.error(new ResourceNotFoundException("Guardian", id)))
-            .flatMap(existing -> {
-                existing.setFirstName(updated.getFirstName());
-                existing.setLastName(updated.getLastName());
-                existing.setRelationship(updated.getRelationship());
-                existing.setPhone(updated.getPhone());
-                existing.setDocumentNumber(updated.getDocumentNumber());
-                existing.setEmail(updated.getEmail());
-                existing.setPrimaryContact(updated.isPrimaryContact());
-                return repository.save(existing);
-            });
+        return repository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Guardian", id)))
+                .flatMap(
+                        existing -> {
+                            existing.setFirstName(updated.getFirstName());
+                            existing.setLastName(updated.getLastName());
+                            existing.setRelationship(updated.getRelationship());
+                            existing.setPhone(updated.getPhone());
+                            existing.setDocumentNumber(updated.getDocumentNumber());
+                            existing.setEmail(updated.getEmail());
+                            existing.setPrimaryContact(updated.isPrimaryContact());
+                            return repository.save(existing);
+                        });
     }
 
     @Override

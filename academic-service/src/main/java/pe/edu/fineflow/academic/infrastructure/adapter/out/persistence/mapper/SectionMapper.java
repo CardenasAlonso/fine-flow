@@ -7,5 +7,6 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Se
 @Mapper(componentModel = "spring")
 public interface SectionMapper {
     SectionEntity toEntity(Section section);
+
     Section toDomain(SectionEntity entity);
 }

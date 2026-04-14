@@ -10,13 +10,20 @@ public final class JustificationResolvedEvent extends DomainEvent {
     private final String studentId;
     private final String resolution;
 
-    public JustificationResolvedEvent(String schoolId, String triggeredBy, 
-            String justificationId, String studentId, String resolution) {
+    public JustificationResolvedEvent(
+            String schoolId,
+            String triggeredBy,
+            String justificationId,
+            String studentId,
+            String resolution) {
         super(schoolId, triggeredBy);
-        this.justificationId = justificationId; 
-        this.studentId = studentId; 
+        this.justificationId = justificationId;
+        this.studentId = studentId;
         this.resolution = resolution;
     }
 
-    @Override public String getEventType() { return "JUSTIFICATION_RESOLVED"; }
+    @Override
+    public String getEventType() {
+        return "JUSTIFICATION_RESOLVED";
+    }
 }

@@ -2,9 +2,9 @@ package pe.edu.fineflow.evaluation.domain.model;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor

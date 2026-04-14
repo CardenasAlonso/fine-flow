@@ -1,6 +1,5 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,8 @@ public class CourseController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<CourseDto.Response> update(@PathVariable String id, @Valid @RequestBody CourseDto.Update request) {
+    public Mono<CourseDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody CourseDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
     }
 
@@ -53,8 +53,13 @@ public class CourseController {
     }
 
     private CourseDto.Response toResponse(Course course) {
-        return new CourseDto.Response(course.getId(), course.getName(), course.getCode(),
-                course.getDescription(), course.getColorHex(), course.getIsActive());
+        return new CourseDto.Response(
+                course.getId(),
+                course.getName(),
+                course.getCode(),
+                course.getDescription(),
+                course.getColorHex(),
+                course.getIsActive());
     }
 
     private Course toDomain(CourseDto.Create dto) {

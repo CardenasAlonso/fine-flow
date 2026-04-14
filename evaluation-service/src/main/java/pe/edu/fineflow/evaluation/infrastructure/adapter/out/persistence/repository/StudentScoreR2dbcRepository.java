@@ -9,8 +9,12 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface StudentScoreR2dbcRepository extends R2dbcRepository<StudentScoreEntity, String> {
     Mono<StudentScoreEntity> findByIdAndSchoolId(String id, String schoolId);
+
     Flux<StudentScoreEntity> findByStudentIdAndSchoolId(String studentId, String schoolId);
+
     Flux<StudentScoreEntity> findByClassTaskIdAndSchoolId(String classTaskId, String schoolId);
+
     Mono<Boolean> existsByStudentIdAndClassTaskId(String studentId, String classTaskId);
+
     Mono<Void> deleteByIdAndSchoolId(String id, String schoolId);
 }

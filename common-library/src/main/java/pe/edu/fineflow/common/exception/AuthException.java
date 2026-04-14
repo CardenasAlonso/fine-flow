@@ -2,9 +2,7 @@ package pe.edu.fineflow.common.exception;
 
 import pe.edu.fineflow.common.enums.ErrorCode;
 
-/**
- * Errores de autenticación y autorización.
- */
+/** Errores de autenticación y autorización. */
 public class AuthException extends BusinessException {
 
     public AuthException(ErrorCode code) {

@@ -6,8 +6,12 @@ import reactor.core.publisher.Mono;
 
 public interface ManageAcademicLevelUseCase {
     Mono<AcademicLevel> create(AcademicLevel level);
+
     Mono<AcademicLevel> update(String id, AcademicLevel level);
+
     Mono<Void> delete(String id);
+
     Mono<AcademicLevel> findById(String id);
+
     Flux<AcademicLevel> findAll();
 }

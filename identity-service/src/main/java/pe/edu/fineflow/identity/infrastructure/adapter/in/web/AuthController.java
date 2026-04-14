@@ -22,7 +22,9 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Iniciar sesión", description = "Autentica un usuario y devuelve tokens JWT")
+    @Operation(
+            summary = "Iniciar sesión",
+            description = "Autentica un usuario y devuelve tokens JWT")
     public Mono<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         return authUseCase.login(request);
     }

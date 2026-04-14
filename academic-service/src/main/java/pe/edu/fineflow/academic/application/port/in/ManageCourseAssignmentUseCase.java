@@ -6,9 +6,14 @@ import reactor.core.publisher.Mono;
 
 public interface ManageCourseAssignmentUseCase {
     Mono<CourseAssignment> create(CourseAssignment assignment);
+
     Mono<CourseAssignment> update(String id, CourseAssignment assignment);
+
     Mono<Void> delete(String id);
+
     Mono<CourseAssignment> findById(String id);
+
     Flux<CourseAssignment> findAll();
+
     Flux<CourseAssignment> findBySection(String sectionId);
 }

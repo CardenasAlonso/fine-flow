@@ -10,8 +10,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
-import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
 import pe.edu.fineflow.common.security.JwtProvider;
 import pe.edu.fineflow.common.tenant.TenantWebFilter;
 
@@ -30,17 +28,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http
-                .csrf(csrf -> csrf.disable())
+        return http.csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
-                .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .pathMatchers("/api/auth/**").permitAll()
-                        .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyExchange().authenticated()
-                )
+                .authorizeExchange(
+                        exchanges ->
+                                exchanges
+                                        .pathMatchers(HttpMethod.OPTIONS)
+                                        .permitAll()
+                                        .pathMatchers("/api/auth/**")
+                                        .permitAll()
+                                        .pathMatchers("/actuator/**")
+                                        .permitAll()
+                                        .pathMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                                        .permitAll()
+                                        .anyExchange()
+                                        .authenticated())
                 .addFilterAt(tenantWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }

@@ -1,12 +1,19 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import pe.edu.fineflow.academic.application.port.in.ManageAcademicPeriodUseCase;
 import pe.edu.fineflow.academic.domain.model.AcademicPeriod;
 import pe.edu.fineflow.academic.infrastructure.adapter.in.web.dto.AcademicPeriodDto;
@@ -41,13 +48,15 @@ public class AcademicPeriodController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<AcademicPeriodDto.Response> create(@Valid @RequestBody AcademicPeriodDto.Create request) {
+    public Mono<AcademicPeriodDto.Response> create(
+            @Valid @RequestBody AcademicPeriodDto.Create request) {
         return useCase.create(toDomain(request)).map(this::toResponse);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<AcademicPeriodDto.Response> update(@PathVariable String id, @Valid @RequestBody AcademicPeriodDto.Update request) {
+    public Mono<AcademicPeriodDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody AcademicPeriodDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
     }
 
@@ -59,8 +68,13 @@ public class AcademicPeriodController {
     }
 
     private AcademicPeriodDto.Response toResponse(AcademicPeriod period) {
-        return new AcademicPeriodDto.Response(period.getId(), period.getName(), period.getPeriodType(),
-                period.getStartDate(), period.getEndDate(), period.getIsActive());
+        return new AcademicPeriodDto.Response(
+                period.getId(),
+                period.getName(),
+                period.getPeriodType(),
+                period.getStartDate(),
+                period.getEndDate(),
+                period.getIsActive());
     }
 
     private AcademicPeriod toDomain(AcademicPeriodDto.Create dto) {

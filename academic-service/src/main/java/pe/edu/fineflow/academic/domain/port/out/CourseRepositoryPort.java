@@ -6,7 +6,10 @@ import reactor.core.publisher.Mono;
 
 public interface CourseRepositoryPort {
     Mono<Course> save(Course course);
+
     Mono<Course> findById(String id);
+
     Flux<Course> findAllBySchoolId(String schoolId);
+
     Mono<Void> deleteById(String id);
 }

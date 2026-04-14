@@ -50,10 +50,19 @@ public class AuditLogRepositoryAdapter implements AuditLogRepositoryPort {
 
     private AuditLog toModel(AuditLogEntity e) {
         return new AuditLog(
-            e.getId(), e.getSchoolId(), e.getUserId(), e.getAction(),
-            e.getEntityType(), e.getEntityId(), e.getOldValueJson(), e.getNewValueJson(),
-            e.getIpAddress(), e.getUserAgent(), e.getResult(), e.getErrorDetail(),
-            e.getDurationMs(), e.getCreatedAt()
-        );
+                e.getId(),
+                e.getSchoolId(),
+                e.getUserId(),
+                e.getAction(),
+                e.getEntityType(),
+                e.getEntityId(),
+                e.getOldValueJson(),
+                e.getNewValueJson(),
+                e.getIpAddress(),
+                e.getUserAgent(),
+                e.getResult(),
+                e.getErrorDetail(),
+                e.getDurationMs(),
+                e.getCreatedAt());
     }
 }

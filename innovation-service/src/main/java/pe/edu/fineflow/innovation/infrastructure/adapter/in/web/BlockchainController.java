@@ -1,4 +1,5 @@
 package pe.edu.fineflow.innovation.infrastructure.adapter.in.web;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,10 @@ import reactor.core.publisher.Mono;
 public class BlockchainController {
 
     private final BlockchainUseCase useCase;
-    public BlockchainController(BlockchainUseCase useCase) { this.useCase = useCase; }
+
+    public BlockchainController(BlockchainUseCase useCase) {
+        this.useCase = useCase;
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")

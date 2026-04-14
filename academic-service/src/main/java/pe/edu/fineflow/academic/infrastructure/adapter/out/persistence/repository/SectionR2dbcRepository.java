@@ -8,5 +8,6 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface SectionR2dbcRepository extends ReactiveCrudRepository<SectionEntity, String> {
     Flux<SectionEntity> findAllBySchoolId(String schoolId);
+
     Flux<SectionEntity> findAllBySchoolYearId(String schoolYearId);
 }

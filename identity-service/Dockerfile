@@ -17,7 +17,5 @@ RUN mvn install -DskipTests -q
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/identity-service/target/*.jar app.jar
-COPY Wallet_SchoolManagment /wallet
-ENV TNS_ADMIN=/wallet
 EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]

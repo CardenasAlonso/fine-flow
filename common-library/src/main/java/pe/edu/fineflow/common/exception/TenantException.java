@@ -3,9 +3,8 @@ package pe.edu.fineflow.common.exception;
 import pe.edu.fineflow.common.enums.ErrorCode;
 
 /**
- * Violación del aislamiento multi-tenant:
- * - Colegio no encontrado o inactivo
- * - school_id ausente en el contexto reactivo
+ * Violación del aislamiento multi-tenant: - Colegio no encontrado o inactivo - school_id ausente en
+ * el contexto reactivo
  */
 public class TenantException extends BusinessException {
 
@@ -22,7 +21,8 @@ public class TenantException extends BusinessException {
     }
 
     public static TenantException inactive(String schoolId) {
-        return new TenantException(ErrorCode.TENANT_INACTIVE,
-            "El colegio '" + schoolId + "' está inactivo o suspendido");
+        return new TenantException(
+                ErrorCode.TENANT_INACTIVE,
+                "El colegio '" + schoolId + "' está inactivo o suspendido");
     }
 }

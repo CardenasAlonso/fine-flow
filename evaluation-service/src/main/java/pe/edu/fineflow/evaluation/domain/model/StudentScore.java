@@ -2,10 +2,10 @@ package pe.edu.fineflow.evaluation.domain.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

@@ -6,9 +6,14 @@ import reactor.core.publisher.Mono;
 
 public interface ManageSectionUseCase {
     Mono<Section> create(Section section);
+
     Mono<Section> update(String id, Section section);
+
     Mono<Void> delete(String id);
+
     Mono<Section> findById(String id);
+
     Flux<Section> findAll();
+
     Flux<Section> findBySchoolYear(String schoolYearId);
 }

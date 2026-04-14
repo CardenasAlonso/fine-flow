@@ -13,8 +13,8 @@ public class AcademicLevelDto {
     public static class Create {
         @NotBlank(message = "El nombre es requerido")
         private String name;
-        @NotNull(message = "El orden es requerido")
-        private Integer orderNum;
+
+        @NotNull(message = "El orden es requerido") private Integer orderNum;
     }
 
     @Data
@@ -23,8 +23,9 @@ public class AcademicLevelDto {
     public static class Update {
         @NotBlank(message = "El nombre es requerido")
         private String name;
-        @NotNull(message = "El orden es requerido")
-        private Integer orderNum;
+
+        @NotNull(message = "El orden es requerido") private Integer orderNum;
+
         private Integer isActive;
     }
 

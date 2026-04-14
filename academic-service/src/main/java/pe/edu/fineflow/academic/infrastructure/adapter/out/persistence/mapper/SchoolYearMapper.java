@@ -7,5 +7,6 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Sc
 @Mapper(componentModel = "spring")
 public interface SchoolYearMapper {
     SchoolYearEntity toEntity(SchoolYear year);
+
     SchoolYear toDomain(SchoolYearEntity entity);
 }

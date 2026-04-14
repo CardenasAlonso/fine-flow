@@ -6,9 +6,14 @@ import reactor.core.publisher.Mono;
 
 public interface ManageCourseCompetencyUseCase {
     Mono<CourseCompetency> create(CourseCompetency competency);
+
     Mono<CourseCompetency> update(String id, CourseCompetency competency);
+
     Mono<Void> delete(String id);
+
     Mono<CourseCompetency> findById(String id);
+
     Flux<CourseCompetency> findAll();
+
     Flux<CourseCompetency> findByCourse(String courseId);
 }

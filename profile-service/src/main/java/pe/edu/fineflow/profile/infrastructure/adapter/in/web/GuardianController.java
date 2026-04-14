@@ -1,6 +1,5 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.in.web;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,8 @@ public class GuardianController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
-    public Mono<GuardianDto.Response> update(@PathVariable String id, @Valid @RequestBody GuardianDto.Update request) {
+    public Mono<GuardianDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody GuardianDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
     }
 
@@ -59,8 +59,16 @@ public class GuardianController {
     }
 
     private GuardianDto.Response toResponse(Guardian g) {
-        return new GuardianDto.Response(g.getId(), g.getFirstName(), g.getLastName(), g.getRelationship(),
-                g.getPhone(), g.getDocumentNumber(), g.getEmail(), g.isPrimaryContact(), g.getStudentId());
+        return new GuardianDto.Response(
+                g.getId(),
+                g.getFirstName(),
+                g.getLastName(),
+                g.getRelationship(),
+                g.getPhone(),
+                g.getDocumentNumber(),
+                g.getEmail(),
+                g.isPrimaryContact(),
+                g.getStudentId());
     }
 
     private Guardian toDomain(GuardianDto.Create dto) {

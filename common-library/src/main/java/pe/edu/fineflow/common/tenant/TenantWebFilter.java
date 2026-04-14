@@ -1,5 +1,6 @@
 package pe.edu.fineflow.common.tenant;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -15,23 +16,20 @@ import pe.edu.fineflow.common.security.JwtProvider;
 import pe.edu.fineflow.common.security.UserPrincipal;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TenantWebFilter implements WebFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final List<String> PUBLIC_PATHS = List.of(
-            "/actuator", "/v3/api-docs", "/swagger-ui", "/webjars");
+    private static final List<String> PUBLIC_PATHS =
+            List.of("/actuator", "/v3/api-docs", "/swagger-ui", "/webjars");
     private final JwtProvider jwtProvider;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
-        if (isPublicPath(path))
-            return chain.filter(exchange);
+        if (isPublicPath(path)) return chain.filter(exchange);
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
@@ -44,17 +42,21 @@ public class TenantWebFilter implements WebFilter {
         }
 
         UserPrincipal principal = jwtProvider.extractPrincipal(token);
-        log.debug("Auth: user={} school={} path={}", principal.userId(), principal.schoolId(), path);
+        log.debug(
+                "Auth: user={} school={} path={}", principal.userId(), principal.schoolId(), path);
 
-        var authentication = new UsernamePasswordAuthenticationToken(
-                principal, null,
-                principal.authorities().stream().map(SimpleGrantedAuthority::new).toList());
+        var authentication =
+                new UsernamePasswordAuthenticationToken(
+                        principal,
+                        null,
+                        principal.authorities().stream().map(SimpleGrantedAuthority::new).toList());
 
         return chain.filter(exchange)
-                .contextWrite(ctx -> ctx
-                        .put(TenantContext.PRINCIPAL_KEY, principal)
-                        .put(TenantContext.SCHOOL_ID_KEY, principal.schoolId()))
-                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))
+                .contextWrite(
+                        ctx ->
+                                ctx.put(TenantContext.PRINCIPAL_KEY, principal)
+                                        .put(TenantContext.SCHOOL_ID_KEY, principal.schoolId()));
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange, String reason) {

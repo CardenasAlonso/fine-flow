@@ -1,4 +1,5 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.out.persistence;
+
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.profile.domain.model.Student;
 import pe.edu.fineflow.profile.domain.port.out.StudentRepositoryPort;
@@ -15,29 +16,42 @@ public class StudentPersistenceAdapter implements StudentRepositoryPort {
     private final StudentPersistenceMapper mapper;
 
     public StudentPersistenceAdapter(StudentR2dbcRepository repo, StudentPersistenceMapper mapper) {
-        this.repo   = repo;
+        this.repo = repo;
         this.mapper = mapper;
     }
 
-    @Override public Mono<Student> save(Student student) {
+    @Override
+    public Mono<Student> save(Student student) {
         return repo.save(mapper.toEntity(student)).map(mapper::toDomain);
     }
-    @Override public Mono<Student> findByIdAndSchoolId(String id, String schoolId) {
+
+    @Override
+    public Mono<Student> findByIdAndSchoolId(String id, String schoolId) {
         return repo.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
-    @Override public Flux<Student> findAllBySchoolId(String schoolId) {
+
+    @Override
+    public Flux<Student> findAllBySchoolId(String schoolId) {
         return repo.findAllBySchoolId(schoolId).map(mapper::toDomain);
     }
-    @Override public Flux<Student> findAllBySectionIdAndSchoolId(String sectionId, String schoolId) {
+
+    @Override
+    public Flux<Student> findAllBySectionIdAndSchoolId(String sectionId, String schoolId) {
         return repo.findAllBySectionIdAndSchoolId(sectionId, schoolId).map(mapper::toDomain);
     }
-    @Override public Mono<Boolean> existsByDocumentNumberAndSchoolId(String doc, String schoolId) {
+
+    @Override
+    public Mono<Boolean> existsByDocumentNumberAndSchoolId(String doc, String schoolId) {
         return repo.existsByDocumentNumberAndSchoolId(doc, schoolId);
     }
-    @Override public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+
+    @Override
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
         return repo.deleteByIdAndSchoolId(id, schoolId);
     }
-    @Override public Flux<Student> searchBySchoolId(String schoolId, String query) {
+
+    @Override
+    public Flux<Student> searchBySchoolId(String schoolId, String query) {
         return repo.searchBySchoolId(schoolId, query).map(mapper::toDomain);
     }
 }

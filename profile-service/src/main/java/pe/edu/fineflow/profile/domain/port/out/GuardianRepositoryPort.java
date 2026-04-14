@@ -6,8 +6,12 @@ import reactor.core.publisher.Mono;
 
 public interface GuardianRepositoryPort {
     Mono<Guardian> save(Guardian guardian);
+
     Mono<Guardian> findById(String id);
+
     Flux<Guardian> findAllBySchoolId(String schoolId);
+
     Flux<Guardian> findAllByStudentId(String studentId);
+
     Mono<Void> deleteById(String id);
 }

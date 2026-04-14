@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 public class SchoolYearDto {
     @Data
@@ -14,10 +13,11 @@ public class SchoolYearDto {
     public static class Create {
         @NotBlank(message = "El nombre es requerido")
         private String name;
-        @NotNull(message = "El grado es requerido")
-        private Integer gradeNumber;
-        @NotNull(message = "El año calendario es requerido")
-        private Integer calendarYear;
+
+        @NotNull(message = "El grado es requerido") private Integer gradeNumber;
+
+        @NotNull(message = "El año calendario es requerido") private Integer calendarYear;
+
         @NotBlank(message = "El nivel académico es requerido")
         private String academicLevelId;
     }
@@ -28,12 +28,14 @@ public class SchoolYearDto {
     public static class Update {
         @NotBlank(message = "El nombre es requerido")
         private String name;
-        @NotNull(message = "El grado es requerido")
-        private Integer gradeNumber;
-        @NotNull(message = "El año calendario es requerido")
-        private Integer calendarYear;
+
+        @NotNull(message = "El grado es requerido") private Integer gradeNumber;
+
+        @NotNull(message = "El año calendario es requerido") private Integer calendarYear;
+
         @NotBlank(message = "El nivel académico es requerido")
         private String academicLevelId;
+
         private Integer isActive;
     }
 

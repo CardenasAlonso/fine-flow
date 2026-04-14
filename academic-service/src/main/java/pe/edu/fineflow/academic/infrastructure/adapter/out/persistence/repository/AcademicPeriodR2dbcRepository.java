@@ -6,7 +6,9 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Ac
 import reactor.core.publisher.Flux;
 
 @Repository
-public interface AcademicPeriodR2dbcRepository extends ReactiveCrudRepository<AcademicPeriodEntity, String> {
+public interface AcademicPeriodR2dbcRepository
+        extends ReactiveCrudRepository<AcademicPeriodEntity, String> {
     Flux<AcademicPeriodEntity> findAllBySchoolId(String schoolId);
+
     Flux<AcademicPeriodEntity> findAllBySchoolYearId(String schoolYearId);
 }

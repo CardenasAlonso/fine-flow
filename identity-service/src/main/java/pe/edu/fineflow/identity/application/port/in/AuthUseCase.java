@@ -7,5 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface AuthUseCase {
     Mono<AuthResponse> login(AuthRequest request);
+
     Mono<AuthResponse> register(RegisterRequest request);
 }

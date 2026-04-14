@@ -7,5 +7,6 @@ import pe.edu.fineflow.identity.infrastructure.adapter.out.persistence.entity.Us
 @Mapper(componentModel = "spring")
 public interface UserPersistenceMapper {
     UserEntity toEntity(User user);
+
     User toDomain(UserEntity entity);
 }

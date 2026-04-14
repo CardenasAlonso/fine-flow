@@ -12,14 +12,18 @@ public class GuardianDto {
     public static class Create {
         @NotBlank(message = "El nombre es requerido")
         private String firstName;
+
         @NotBlank(message = "El apellido es requerido")
         private String lastName;
+
         @NotBlank(message = "La relación es requerida")
         private String relationship;
+
         private String phone;
         private String documentNumber;
         private String email;
         private boolean primaryContact;
+
         @NotBlank(message = "El estudiante es requerido")
         private String studentId;
     }
@@ -30,10 +34,13 @@ public class GuardianDto {
     public static class Update {
         @NotBlank(message = "El nombre es requerido")
         private String firstName;
+
         @NotBlank(message = "El apellido es requerido")
         private String lastName;
+
         @NotBlank(message = "La relación es requerida")
         private String relationship;
+
         private String phone;
         private String documentNumber;
         private String email;

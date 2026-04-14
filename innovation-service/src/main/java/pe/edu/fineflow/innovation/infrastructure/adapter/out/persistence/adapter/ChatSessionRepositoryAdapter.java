@@ -2,13 +2,13 @@ package pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.adapte
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pe.edu.fineflow.innovation.domain.model.ChatSession;
 import pe.edu.fineflow.innovation.domain.model.ChatMessage;
+import pe.edu.fineflow.innovation.domain.model.ChatSession;
 import pe.edu.fineflow.innovation.domain.port.out.ChatSessionRepositoryPort;
-import pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.entity.ChatSessionEntity;
 import pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.entity.ChatMessageEntity;
-import pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.repository.ChatSessionR2dbcRepository;
+import pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.entity.ChatSessionEntity;
 import pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.repository.ChatMessageR2dbcRepository;
+import pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.repository.ChatSessionR2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -36,18 +36,22 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
 
     @Override
     public Flux<ChatMessage> findMessagesBySessionId(String sessionId) {
-        return messageRepository.findBySessionIdOrderByCreatedAtAsc(sessionId).map(this::toMessageModel);
+        return messageRepository
+                .findBySessionIdOrderByCreatedAtAsc(sessionId)
+                .map(this::toMessageModel);
     }
 
     @Override
     public Mono<Void> closeSession(String sessionId) {
-        return sessionRepository.findById(sessionId)
-            .flatMap(s -> {
-                s.setActive(false);
-                s.setEndedAt(java.time.Instant.now());
-                return sessionRepository.save(s);
-            })
-            .then();
+        return sessionRepository
+                .findById(sessionId)
+                .flatMap(
+                        s -> {
+                            s.setActive(false);
+                            s.setEndedAt(java.time.Instant.now());
+                            return sessionRepository.save(s);
+                        })
+                .then();
     }
 
     private ChatSessionEntity toSessionEntity(ChatSession m) {
@@ -66,9 +70,15 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
 
     private ChatSession toSessionModel(ChatSessionEntity e) {
         return new ChatSession(
-            e.getId(), e.getSchoolId(), e.getUserId(), e.getUserRole(),
-            e.getSessionToken(), e.getStartedAt(), e.getLastMessageAt(), e.getEndedAt(), e.isActive()
-        );
+                e.getId(),
+                e.getSchoolId(),
+                e.getUserId(),
+                e.getUserRole(),
+                e.getSessionToken(),
+                e.getStartedAt(),
+                e.getLastMessageAt(),
+                e.getEndedAt(),
+                e.isActive());
     }
 
     private ChatMessageEntity toMessageEntity(ChatMessage m) {
@@ -85,8 +95,12 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
 
     private ChatMessage toMessageModel(ChatMessageEntity e) {
         return new ChatMessage(
-            e.getId(), e.getSessionId(), e.getRole(), e.getContent(),
-            e.getSourcesJson(), e.getConfidence(), e.getCreatedAt()
-        );
+                e.getId(),
+                e.getSessionId(),
+                e.getRole(),
+                e.getContent(),
+                e.getSourcesJson(),
+                e.getConfidence(),
+                e.getCreatedAt());
     }
 }

@@ -1,5 +1,6 @@
 package pe.edu.fineflow.academic.application.service;
 
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageSectionUseCase;
@@ -10,8 +11,6 @@ import pe.edu.fineflow.common.util.UuidGenerator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-
 @Service
 @RequiredArgsConstructor
 public class ManageSectionService implements ManageSectionUseCase {
@@ -19,25 +18,29 @@ public class ManageSectionService implements ManageSectionUseCase {
 
     @Override
     public Mono<Section> create(Section section) {
-        return TenantContext.getSchoolId().flatMap(schoolId -> {
-            section.setId(UuidGenerator.generate());
-            section.setSchoolId(schoolId);
-            section.setIsActive(1);
-            section.setCreatedAt(Instant.now());
-            return repository.save(section);
-        });
+        return TenantContext.getSchoolId()
+                .flatMap(
+                        schoolId -> {
+                            section.setId(UuidGenerator.generate());
+                            section.setSchoolId(schoolId);
+                            section.setIsActive(1);
+                            section.setCreatedAt(Instant.now());
+                            return repository.save(section);
+                        });
     }
 
     @Override
     public Mono<Section> update(String id, Section updated) {
-        return repository.findById(id)
-            .flatMap(existing -> {
-                existing.setName(updated.getName());
-                existing.setMaxCapacity(updated.getMaxCapacity());
-                existing.setTutorId(updated.getTutorId());
-                existing.setIsActive(updated.getIsActive());
-                return repository.save(existing);
-            });
+        return repository
+                .findById(id)
+                .flatMap(
+                        existing -> {
+                            existing.setName(updated.getName());
+                            existing.setMaxCapacity(updated.getMaxCapacity());
+                            existing.setTutorId(updated.getTutorId());
+                            existing.setIsActive(updated.getIsActive());
+                            return repository.save(existing);
+                        });
     }
 
     @Override

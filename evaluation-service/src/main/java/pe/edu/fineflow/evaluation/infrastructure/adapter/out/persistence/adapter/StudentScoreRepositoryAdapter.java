@@ -59,9 +59,14 @@ public class StudentScoreRepositoryAdapter implements StudentScoreRepositoryPort
 
     private StudentScore toModel(StudentScoreEntity e) {
         return new StudentScore(
-            e.getId(), e.getSchoolId(), e.getStudentId(), e.getClassTaskId(),
-            e.getRegisteredBy(), e.getComments(), e.getScore(),
-            e.getRegisteredAt(), e.getUpdatedAt()
-        );
+                e.getId(),
+                e.getSchoolId(),
+                e.getStudentId(),
+                e.getClassTaskId(),
+                e.getRegisteredBy(),
+                e.getComments(),
+                e.getScore(),
+                e.getRegisteredAt(),
+                e.getUpdatedAt());
     }
 }
