@@ -7,5 +7,6 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Co
 @Mapper(componentModel = "spring")
 public interface CourseAssignmentMapper {
     CourseAssignmentEntity toEntity(CourseAssignment assignment);
+
     CourseAssignment toDomain(CourseAssignmentEntity entity);
 }

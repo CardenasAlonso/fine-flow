@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface ReportJobR2dbcRepository extends R2dbcRepository<ReportJobEntity, String> {
     Mono<ReportJobEntity> findByIdAndSchoolId(String id, String schoolId);
+
     Flux<ReportJobEntity> findByRequestedByAndSchoolId(String userId, String schoolId);
+
     Flux<ReportJobEntity> findByStatus(String status);
 }

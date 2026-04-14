@@ -14,16 +14,19 @@ public abstract class ReactiveSecurityConfig {
 
     protected final JwtProvider jwtProvider;
 
-    protected SecurityWebFilterChain buildChain(ServerHttpSecurity http, WebFilter tenantFilter, String... publicPaths) {
-        return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+    protected SecurityWebFilterChain buildChain(
+            ServerHttpSecurity http, WebFilter tenantFilter, String... publicPaths) {
+        return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .authorizeExchange(ex -> ex
-                        .pathMatchers(publicPaths).permitAll()
-                        .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .anyExchange().authenticated()
-                )
+                .authorizeExchange(
+                        ex ->
+                                ex.pathMatchers(publicPaths)
+                                        .permitAll()
+                                        .pathMatchers(HttpMethod.OPTIONS)
+                                        .permitAll()
+                                        .anyExchange()
+                                        .authenticated())
                 .addFilterAt(tenantFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }

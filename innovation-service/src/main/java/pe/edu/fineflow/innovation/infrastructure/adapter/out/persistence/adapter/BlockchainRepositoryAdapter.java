@@ -52,9 +52,16 @@ public class BlockchainRepositoryAdapter implements BlockchainRepositoryPort {
 
     private BlockchainBlock toModel(BlockchainBlockEntity e) {
         return new BlockchainBlock(
-            e.getId(), e.getSchoolId(), e.getEventType(), e.getEntityId(),
-            e.getEntityType(), e.getPayload(), e.getPreviousHash(), e.getHash(),
-            e.getCreatedBy(), e.getBlockIndex(), e.getCreatedAt()
-        );
+                e.getId(),
+                e.getSchoolId(),
+                e.getEventType(),
+                e.getEntityId(),
+                e.getEntityType(),
+                e.getPayload(),
+                e.getPreviousHash(),
+                e.getHash(),
+                e.getCreatedBy(),
+                e.getBlockIndex(),
+                e.getCreatedAt());
     }
 }

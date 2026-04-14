@@ -7,5 +7,6 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Ac
 @Mapper(componentModel = "spring")
 public interface AcademicPeriodMapper {
     AcademicPeriodEntity toEntity(AcademicPeriod period);
+
     AcademicPeriod toDomain(AcademicPeriodEntity entity);
 }

@@ -9,7 +9,10 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface UserR2dbcRepository extends ReactiveCrudRepository<UserEntity, String> {
     Mono<UserEntity> findByEmailAndSchoolId(String email, String schoolId);
+
     Mono<UserEntity> findByEmail(String email);
+
     Mono<Boolean> existsByEmailAndSchoolId(String email, String schoolId);
+
     Flux<UserEntity> findAllBySchoolId(String schoolId);
 }

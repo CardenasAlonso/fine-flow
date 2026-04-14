@@ -12,6 +12,7 @@ public class CourseDto {
     public static class Create {
         @NotBlank(message = "El nombre es requerido")
         private String name;
+
         private String code;
         private String description;
         private String colorHex;
@@ -23,6 +24,7 @@ public class CourseDto {
     public static class Update {
         @NotBlank(message = "El nombre es requerido")
         private String name;
+
         private String code;
         private String description;
         private String colorHex;

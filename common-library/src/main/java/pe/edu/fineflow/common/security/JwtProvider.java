@@ -5,12 +5,11 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.util.*;
+import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -59,16 +58,16 @@ public class JwtProvider {
     }
 
     public Claims parseAndValidate(String token) {
-        return Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        return Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token).getPayload();
     }
 
     public boolean isValid(String token) {
-        try { parseAndValidate(token); return true; }
-        catch (JwtException | IllegalArgumentException e) { return false; }
+        try {
+            parseAndValidate(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     public UserPrincipal extractPrincipal(String token) {
@@ -78,9 +77,10 @@ public class JwtProvider {
                 claims.get("schoolId", String.class),
                 claims.get("email", String.class),
                 claims.get("role", String.class),
-                Set.of("ROLE_" + claims.get("role", String.class))
-        );
+                Set.of("ROLE_" + claims.get("role", String.class)));
     }
 
-    public long getRefreshTokenMs() { return refreshTokenMs; }
+    public long getRefreshTokenMs() {
+        return refreshTokenMs;
+    }
 }

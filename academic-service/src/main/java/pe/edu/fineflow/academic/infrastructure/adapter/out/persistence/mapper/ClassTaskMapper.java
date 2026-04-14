@@ -7,5 +7,6 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Cl
 @Mapper(componentModel = "spring")
 public interface ClassTaskMapper {
     ClassTaskEntity toEntity(ClassTask task);
+
     ClassTask toDomain(ClassTaskEntity entity);
 }

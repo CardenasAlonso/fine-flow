@@ -1,12 +1,19 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import pe.edu.fineflow.academic.application.port.in.ManageAcademicLevelUseCase;
 import pe.edu.fineflow.academic.domain.model.AcademicLevel;
 import pe.edu.fineflow.academic.infrastructure.adapter.in.web.dto.AcademicLevelDto;
@@ -35,13 +42,15 @@ public class AcademicLevelController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<AcademicLevelDto.Response> create(@Valid @RequestBody AcademicLevelDto.Create request) {
+    public Mono<AcademicLevelDto.Response> create(
+            @Valid @RequestBody AcademicLevelDto.Create request) {
         return useCase.create(toDomain(request)).map(this::toResponse);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<AcademicLevelDto.Response> update(@PathVariable String id, @Valid @RequestBody AcademicLevelDto.Update request) {
+    public Mono<AcademicLevelDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody AcademicLevelDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
     }
 
@@ -53,7 +62,8 @@ public class AcademicLevelController {
     }
 
     private AcademicLevelDto.Response toResponse(AcademicLevel level) {
-        return new AcademicLevelDto.Response(level.getId(), level.getName(), level.getOrderNum(), level.getIsActive());
+        return new AcademicLevelDto.Response(
+                level.getId(), level.getName(), level.getOrderNum(), level.getIsActive());
     }
 
     private AcademicLevel toDomain(AcademicLevelDto.Create dto) {

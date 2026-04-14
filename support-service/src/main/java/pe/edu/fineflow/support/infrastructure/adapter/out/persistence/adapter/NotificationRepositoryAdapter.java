@@ -1,5 +1,6 @@
 package pe.edu.fineflow.support.infrastructure.adapter.out.persistence.adapter;
 
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.support.domain.model.Notification;
@@ -8,7 +9,6 @@ import pe.edu.fineflow.support.infrastructure.adapter.out.persistence.entity.Not
 import pe.edu.fineflow.support.infrastructure.adapter.out.persistence.repository.NotificationR2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +23,9 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
 
     @Override
     public Flux<Notification> findUnreadByUserIdAndSchoolId(String userId, String schoolId) {
-        return repository.findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId).map(this::toModel);
+        return repository
+                .findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId)
+                .map(this::toModel);
     }
 
     @Override
@@ -38,25 +40,29 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
 
     @Override
     public Mono<Notification> markAsRead(String id, String schoolId) {
-        return repository.findById(id)
-            .filter(e -> e.getSchoolId().equals(schoolId))
-            .flatMap(e -> {
-                e.setRead(true);
-                e.setReadAt(Instant.now());
-                return repository.save(e);
-            })
-            .map(this::toModel);
+        return repository
+                .findById(id)
+                .filter(e -> e.getSchoolId().equals(schoolId))
+                .flatMap(
+                        e -> {
+                            e.setRead(true);
+                            e.setReadAt(Instant.now());
+                            return repository.save(e);
+                        })
+                .map(this::toModel);
     }
 
     @Override
     public Mono<Void> markAllAsReadByUserId(String userId, String schoolId) {
-        return repository.findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId)
-            .flatMap(e -> {
-                e.setRead(true);
-                e.setReadAt(Instant.now());
-                return repository.save(e);
-            })
-            .then();
+        return repository
+                .findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId)
+                .flatMap(
+                        e -> {
+                            e.setRead(true);
+                            e.setReadAt(Instant.now());
+                            return repository.save(e);
+                        })
+                .then();
     }
 
     private NotificationEntity toEntity(Notification m) {
@@ -78,9 +84,18 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
 
     private Notification toModel(NotificationEntity e) {
         return new Notification(
-            e.getId(), e.getSchoolId(), e.getUserId(), e.getTargetRole(),
-            e.getNotificationType(), e.getTitle(), e.getBody(), e.getActionUrl(),
-            e.getMetadataJson(), e.isRead(), e.getReadAt(), e.getExpiresAt(), e.getCreatedAt()
-        );
+                e.getId(),
+                e.getSchoolId(),
+                e.getUserId(),
+                e.getTargetRole(),
+                e.getNotificationType(),
+                e.getTitle(),
+                e.getBody(),
+                e.getActionUrl(),
+                e.getMetadataJson(),
+                e.isRead(),
+                e.getReadAt(),
+                e.getExpiresAt(),
+                e.getCreatedAt());
     }
 }

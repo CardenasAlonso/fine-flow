@@ -6,8 +6,12 @@ import reactor.core.publisher.Mono;
 
 public interface ClassTaskRepositoryPort {
     Mono<ClassTask> save(ClassTask task);
+
     Mono<ClassTask> findById(String id);
+
     Flux<ClassTask> findAllBySchoolId(String schoolId);
+
     Flux<ClassTask> findAllByCourseAssignmentId(String courseAssignmentId);
+
     Mono<Void> deleteById(String id);
 }

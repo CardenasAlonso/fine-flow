@@ -1,9 +1,9 @@
 package pe.edu.fineflow.profile.domain.model;
 
 import java.time.Instant;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +19,6 @@ public class Guardian {
     private String phone;
     private String documentNumber;
     private String email;
-    private boolean isPrimaryContact;
+    private boolean primaryContact;
     private Instant createdAt;
 }

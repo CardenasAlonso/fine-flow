@@ -8,5 +8,6 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface ClassTaskR2dbcRepository extends ReactiveCrudRepository<ClassTaskEntity, String> {
     Flux<ClassTaskEntity> findAllBySchoolId(String schoolId);
+
     Flux<ClassTaskEntity> findAllByCourseAssignmentId(String courseAssignmentId);
 }

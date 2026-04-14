@@ -6,8 +6,12 @@ import reactor.core.publisher.Mono;
 
 public interface ManageCourseUseCase {
     Mono<Course> create(Course course);
+
     Mono<Course> update(String id, Course course);
+
     Mono<Void> delete(String id);
+
     Mono<Course> findById(String id);
+
     Flux<Course> findAll();
 }

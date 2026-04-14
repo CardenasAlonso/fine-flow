@@ -9,7 +9,10 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface TeacherR2dbcRepository extends R2dbcRepository<TeacherEntity, String> {
     Mono<TeacherEntity> findByIdAndSchoolId(String id, String schoolId);
+
     Flux<TeacherEntity> findAllBySchoolId(String schoolId);
+
     Mono<Boolean> existsByDocumentNumberAndSchoolId(String documentNumber, String schoolId);
+
     Mono<Void> deleteByIdAndSchoolId(String id, String schoolId);
 }

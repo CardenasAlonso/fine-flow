@@ -1,6 +1,5 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,8 @@ public class SectionController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<SectionDto.Response> update(@PathVariable String id, @Valid @RequestBody SectionDto.Update request) {
+    public Mono<SectionDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody SectionDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
     }
 
@@ -59,8 +59,12 @@ public class SectionController {
     }
 
     private SectionDto.Response toResponse(Section section) {
-        return new SectionDto.Response(section.getId(), section.getName(), section.getMaxCapacity(),
-                section.getTutorId(), section.getIsActive());
+        return new SectionDto.Response(
+                section.getId(),
+                section.getName(),
+                section.getMaxCapacity(),
+                section.getTutorId(),
+                section.getIsActive());
     }
 
     private Section toDomain(SectionDto.Create dto) {

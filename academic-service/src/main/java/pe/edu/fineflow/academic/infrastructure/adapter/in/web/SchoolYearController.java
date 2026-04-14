@@ -1,6 +1,5 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,8 @@ public class SchoolYearController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<SchoolYearDto.Response> update(@PathVariable String id, @Valid @RequestBody SchoolYearDto.Update request) {
+    public Mono<SchoolYearDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody SchoolYearDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
     }
 
@@ -59,8 +59,13 @@ public class SchoolYearController {
     }
 
     private SchoolYearDto.Response toResponse(SchoolYear year) {
-        return new SchoolYearDto.Response(year.getId(), year.getName(), year.getGradeNumber(),
-                year.getCalendarYear(), year.getAcademicLevelId(), year.getIsActive());
+        return new SchoolYearDto.Response(
+                year.getId(),
+                year.getName(),
+                year.getGradeNumber(),
+                year.getCalendarYear(),
+                year.getAcademicLevelId(),
+                year.getIsActive());
     }
 
     private SchoolYear toDomain(SchoolYearDto.Create dto) {

@@ -8,5 +8,6 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface AuditLogR2dbcRepository extends R2dbcRepository<AuditLogEntity, String> {
     Flux<AuditLogEntity> findBySchoolIdAndAction(String schoolId, String action);
+
     Flux<AuditLogEntity> findBySchoolIdAndUserId(String schoolId, String userId);
 }

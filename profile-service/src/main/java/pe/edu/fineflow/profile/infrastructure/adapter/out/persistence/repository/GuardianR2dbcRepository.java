@@ -8,5 +8,6 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface GuardianR2dbcRepository extends ReactiveCrudRepository<GuardianEntity, String> {
     Flux<GuardianEntity> findAllBySchoolId(String schoolId);
+
     Flux<GuardianEntity> findAllByStudentId(String studentId);
 }

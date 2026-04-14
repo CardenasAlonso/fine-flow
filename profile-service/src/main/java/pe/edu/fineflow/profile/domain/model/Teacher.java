@@ -1,9 +1,9 @@
 package pe.edu.fineflow.profile.domain.model;
 
 import java.time.Instant;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +16,7 @@ public class Teacher {
     private String lastName;
     private String documentNumber;
     private String specialty;
+    private String phone;
     private String status;
     private Instant createdAt;
 }

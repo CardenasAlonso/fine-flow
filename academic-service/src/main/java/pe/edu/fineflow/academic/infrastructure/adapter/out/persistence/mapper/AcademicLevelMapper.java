@@ -7,5 +7,6 @@ import pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity.Ac
 @Mapper(componentModel = "spring")
 public interface AcademicLevelMapper {
     AcademicLevelEntity toEntity(AcademicLevel level);
+
     AcademicLevel toDomain(AcademicLevelEntity entity);
 }

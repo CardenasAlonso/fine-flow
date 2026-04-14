@@ -1,5 +1,6 @@
 package pe.edu.fineflow.gateway.filter;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -12,17 +13,14 @@ import org.springframework.web.server.ServerWebExchange;
 import pe.edu.fineflow.common.security.JwtProvider;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final String BEARER = "Bearer ";
-    private static final List<String> PUBLIC_PATHS = List.of(
-            "/api/auth/", "/actuator/", "/v3/api-docs/", "/swagger-ui/"
-    );
+    private static final List<String> PUBLIC_PATHS =
+            List.of("/api/auth/", "/actuator/", "/v3/api-docs/", "/swagger-ui/");
 
     private final JwtProvider jwtProvider;
 
@@ -52,7 +50,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     }
 
     @Override
-    public int getOrder() { return -100; }
+    public int getOrder() {
+        return -100;
+    }
 
     private boolean isPublicPath(String path) {
         return PUBLIC_PATHS.stream().anyMatch(path::startsWith);

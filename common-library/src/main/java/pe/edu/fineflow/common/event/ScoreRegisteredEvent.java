@@ -12,14 +12,22 @@ public final class ScoreRegisteredEvent extends DomainEvent {
     private final String classTaskId;
     private final BigDecimal score;
 
-    public ScoreRegisteredEvent(String schoolId, String triggeredBy, String scoreId, 
-            String studentId, String classTaskId, BigDecimal score) {
+    public ScoreRegisteredEvent(
+            String schoolId,
+            String triggeredBy,
+            String scoreId,
+            String studentId,
+            String classTaskId,
+            BigDecimal score) {
         super(schoolId, triggeredBy);
-        this.scoreId = scoreId; 
-        this.studentId = studentId; 
-        this.classTaskId = classTaskId; 
+        this.scoreId = scoreId;
+        this.studentId = studentId;
+        this.classTaskId = classTaskId;
         this.score = score;
     }
 
-    @Override public String getEventType() { return "SCORE_REGISTERED"; }
+    @Override
+    public String getEventType() {
+        return "SCORE_REGISTERED";
+    }
 }
