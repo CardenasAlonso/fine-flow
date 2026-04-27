@@ -17,5 +17,5 @@ public class ChatSession {
     private Instant startedAt;
     private Instant lastMessageAt;
     private Instant endedAt;
-    private boolean isActive;
+    private Integer isActive;
 }

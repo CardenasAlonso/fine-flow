@@ -1,10 +1,8 @@
 package pe.edu.fineflow.academic.application.service;
 
 import java.time.Instant;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageClassTaskUseCase;
 import pe.edu.fineflow.academic.domain.model.ClassTask;
 import pe.edu.fineflow.academic.domain.port.out.ClassTaskRepositoryPort;

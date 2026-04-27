@@ -41,7 +41,7 @@ public class NotificationEntity {
     private String metadataJson;
 
     @Column("IS_READ")
-    private boolean isRead;
+    private Integer isRead;
 
     @Column("READ_AT")
     private Instant readAt;

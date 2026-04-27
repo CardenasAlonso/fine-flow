@@ -23,7 +23,7 @@ public class TenantWebFilter implements WebFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
     private static final List<String> PUBLIC_PATHS =
-            List.of("/actuator", "/v3/api-docs", "/swagger-ui", "/webjars");
+            List.of("/actuator", "/v3/api-docs", "/swagger-ui", "/webjars", "/api/auth/");
     private final JwtProvider jwtProvider;
 
     @Override

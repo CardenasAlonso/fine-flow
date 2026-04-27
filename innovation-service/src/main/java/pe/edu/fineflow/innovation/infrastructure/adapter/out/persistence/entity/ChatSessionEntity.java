@@ -37,5 +37,5 @@ public class ChatSessionEntity {
     private Instant endedAt;
 
     @Column("IS_ACTIVE")
-    private boolean isActive;
+    private Integer isActive;
 }

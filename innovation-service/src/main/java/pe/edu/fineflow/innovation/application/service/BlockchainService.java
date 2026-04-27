@@ -149,9 +149,15 @@ public class BlockchainService implements BlockchainUseCase {
                                                 curr.getBlockIndex()
                                                         + schoolId
                                                         + curr.getEventType()
-                                                        + curr.getEntityId()
-                                                        + curr.getEntityType()
-                                                        + curr.getPayload()
+                                                        + (curr.getEntityId() != null
+                                                                ? curr.getEntityId()
+                                                                : "")
+                                                        + (curr.getEntityType() != null
+                                                                ? curr.getEntityType()
+                                                                : "")
+                                                        + (curr.getPayload() != null
+                                                                ? curr.getPayload()
+                                                                : "")
                                                         + curr.getPreviousHash());
                                 if (!curr.getHash().equals(expectedHash)) return false;
                             }

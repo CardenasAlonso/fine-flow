@@ -1,22 +1,16 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.out.persistence.mapper;
 
-import org.mapstruct.Named;
+import org.springframework.stereotype.Component;
 import pe.edu.fineflow.profile.domain.model.Guardian;
 import pe.edu.fineflow.profile.infrastructure.adapter.out.persistence.entity.GuardianEntity;
 
-public interface GuardianPersistenceMapper {
+@Component
+public class GuardianPersistenceMapper {
 
-    @Named("intToBoolean")
-    static boolean intToBoolean(Integer value) {
-        return value != null && value == 1;
-    }
-
-    @Named("booleanToInt")
-    static Integer booleanToInt(boolean value) {
-        return value ? 1 : 0;
-    }
-
-    default Guardian toDomain(GuardianEntity entity) {
+    public Guardian toDomain(GuardianEntity entity) {
+        if (entity == null) {
+            return null;
+        }
         Guardian guardian = new Guardian();
         guardian.setId(entity.getId());
         guardian.setSchoolId(entity.getSchoolId());
@@ -33,7 +27,10 @@ public interface GuardianPersistenceMapper {
         return guardian;
     }
 
-    default GuardianEntity toEntity(Guardian guardian) {
+    public GuardianEntity toEntity(Guardian guardian) {
+        if (guardian == null) {
+            return null;
+        }
         GuardianEntity entity = new GuardianEntity();
         entity.setId(guardian.getId());
         entity.setSchoolId(guardian.getSchoolId());
@@ -48,5 +45,13 @@ public interface GuardianPersistenceMapper {
         entity.setIsPrimaryContact(booleanToInt(guardian.isPrimaryContact()));
         entity.setCreatedAt(guardian.getCreatedAt());
         return entity;
+    }
+
+    private boolean intToBoolean(Integer value) {
+        return value != null && value == 1;
+    }
+
+    private Integer booleanToInt(boolean value) {
+        return value ? 1 : 0;
     }
 }

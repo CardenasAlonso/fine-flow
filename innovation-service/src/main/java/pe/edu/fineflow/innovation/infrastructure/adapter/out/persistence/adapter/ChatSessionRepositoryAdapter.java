@@ -47,7 +47,7 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
                 .findById(sessionId)
                 .flatMap(
                         s -> {
-                            s.setActive(false);
+                            s.setIsActive(0);
                             s.setEndedAt(java.time.Instant.now());
                             return sessionRepository.save(s);
                         })
@@ -64,7 +64,7 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
         e.setStartedAt(m.getStartedAt());
         e.setLastMessageAt(m.getLastMessageAt());
         e.setEndedAt(m.getEndedAt());
-        e.setActive(m.isActive());
+        e.setIsActive(m.getIsActive() != null && m.getIsActive() == 1 ? 1 : 0);
         return e;
     }
 
@@ -78,7 +78,7 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
                 e.getStartedAt(),
                 e.getLastMessageAt(),
                 e.getEndedAt(),
-                e.isActive());
+                e.getIsActive());
     }
 
     private ChatMessageEntity toMessageEntity(ChatMessage m) {

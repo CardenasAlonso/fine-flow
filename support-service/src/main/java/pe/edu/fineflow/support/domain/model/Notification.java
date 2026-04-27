@@ -18,7 +18,7 @@ public class Notification {
     private String body;
     private String actionUrl;
     private String metadataJson;
-    private boolean isRead;
+    private Integer isRead;
     private Instant readAt;
     private Instant expiresAt;
     private Instant createdAt;

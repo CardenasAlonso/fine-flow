@@ -23,9 +23,7 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
 
     @Override
     public Flux<Notification> findUnreadByUserIdAndSchoolId(String userId, String schoolId) {
-        return repository
-                .findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId)
-                .map(this::toModel);
+        return repository.findByUserIdAndSchoolIdAndIsRead(userId, schoolId, 0).map(this::toModel);
     }
 
     @Override
@@ -35,7 +33,7 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
 
     @Override
     public Mono<Long> countUnreadByUserId(String userId, String schoolId) {
-        return repository.findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId).count();
+        return repository.findByUserIdAndSchoolIdAndIsRead(userId, schoolId, 0).count();
     }
 
     @Override
@@ -45,7 +43,7 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
                 .filter(e -> e.getSchoolId().equals(schoolId))
                 .flatMap(
                         e -> {
-                            e.setRead(true);
+                            e.setIsRead(1);
                             e.setReadAt(Instant.now());
                             return repository.save(e);
                         })
@@ -55,10 +53,10 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
     @Override
     public Mono<Void> markAllAsReadByUserId(String userId, String schoolId) {
         return repository
-                .findByUserIdAndSchoolIdAndIsReadFalse(userId, schoolId)
+                .findByUserIdAndSchoolIdAndIsRead(userId, schoolId, 0)
                 .flatMap(
                         e -> {
-                            e.setRead(true);
+                            e.setIsRead(1);
                             e.setReadAt(Instant.now());
                             return repository.save(e);
                         })
@@ -76,7 +74,7 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
         e.setBody(m.getBody());
         e.setActionUrl(m.getActionUrl());
         e.setMetadataJson(m.getMetadataJson());
-        e.setRead(m.isRead());
+        e.setIsRead(m.getIsRead() != null && m.getIsRead() == 1 ? 1 : 0);
         e.setReadAt(m.getReadAt());
         e.setExpiresAt(m.getExpiresAt());
         return e;
@@ -93,7 +91,7 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
                 e.getBody(),
                 e.getActionUrl(),
                 e.getMetadataJson(),
-                e.isRead(),
+                e.getIsRead(),
                 e.getReadAt(),
                 e.getExpiresAt(),
                 e.getCreatedAt());

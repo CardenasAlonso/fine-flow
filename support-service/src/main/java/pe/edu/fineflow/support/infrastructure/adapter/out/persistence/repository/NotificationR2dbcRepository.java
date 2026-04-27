@@ -7,7 +7,8 @@ import reactor.core.publisher.Flux;
 
 @Repository
 public interface NotificationR2dbcRepository extends R2dbcRepository<NotificationEntity, String> {
-    Flux<NotificationEntity> findByUserIdAndSchoolIdAndIsReadFalse(String userId, String schoolId);
+    Flux<NotificationEntity> findByUserIdAndSchoolIdAndIsRead(
+            String userId, String schoolId, Integer isRead);
 
     Flux<NotificationEntity> findByTargetRoleAndSchoolId(String role, String schoolId);
 

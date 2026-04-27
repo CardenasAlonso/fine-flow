@@ -42,7 +42,7 @@ public class AiChatService implements AiChatUseCase {
                             session.setSchoolId(p.schoolId());
                             session.setUserId(p.userId());
                             session.setUserRole(p.role());
-                            session.setActive(true);
+                            session.setIsActive(1);
                             session.setStartedAt(Instant.now());
                             return repo.save(session);
                         });

@@ -79,7 +79,7 @@ public class NotificationService implements ManageNotificationUseCase {
         n.setNotificationType(type);
         n.setTitle(title);
         n.setBody(body);
-        n.setRead(false);
+        n.setIsRead(0);
         n.setCreatedAt(Instant.now());
         return repo.save(n);
     }
@@ -94,7 +94,7 @@ public class NotificationService implements ManageNotificationUseCase {
         n.setTitle(title);
         n.setBody(body);
         n.setActionUrl(url);
-        n.setRead(false);
+        n.setIsRead(0);
         n.setCreatedAt(Instant.now());
         return repo.save(n);
     }

@@ -3466,9 +3466,10 @@ ALTER TABLE CHAT_MESSAGES ADD (school_id VARCHAR2(50));
 
 -- Poblar el school_id desde CHAT_SESSIONS para registros existentes
 UPDATE CHAT_MESSAGES cm
-    SELECT cs.school_id
-    FROM   CHAT_SESSIONS cs
-    WHERE  cs.id = cm.session_id
+SET school_id = (
+    SELECT cs.school_id 
+    FROM CHAT_SESSIONS cs 
+    WHERE cs.id = cm.session_id 
 );
 
 -- Ahora hacer la columna NOT NULL (ya tiene valores)
