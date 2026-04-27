@@ -63,30 +63,28 @@ public class ReportRequestService implements RequestReportUseCase {
                 .doOnSuccess(
                         v -> log.debug("Status updated to PROCESSING for job: {}", job.getId()))
                 .doOnError(
-                        e ->
-                                log.error(
-                                        "Failed to update status to PROCESSING for job {}: {}",
-                                        job.getId(),
-                                        e.getMessage()))
+                        e -> log.error(
+                                "Failed to update status to PROCESSING for job {}: {}",
+                                job.getId(),
+                                e.getMessage()))
                 .subscribe();
 
         Mono.fromCallable(
-                        () -> {
-                            byte[] bytes;
-                            if ("PDF".equals(job.getFormat())) {
-                                bytes = pdfGen.generate(job);
-                            } else {
-                                bytes = excelGen.generate(job);
-                            }
-                            String path =
-                                    "/reports/"
-                                            + job.getSchoolId()
-                                            + "/"
-                                            + job.getId()
-                                            + "."
-                                            + job.getFormat().toLowerCase();
-                            return path;
-                        })
+                () -> {
+                    byte[] bytes;
+                    if ("PDF".equals(job.getFormat())) {
+                        bytes = pdfGen.generate(job);
+                    } else {
+                        bytes = excelGen.generate(job);
+                    }
+                    String path = "/reports/"
+                            + job.getSchoolId()
+                            + "/"
+                            + job.getId()
+                            + "."
+                            + job.getFormat().toLowerCase();
+                    return path;
+                })
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(path -> repo.updateStatus(job.getId(), "COMPLETED", 100, path))
                 .doOnSuccess(v -> log.info("Report generated successfully: jobId={}", job.getId()))
@@ -99,12 +97,11 @@ public class ReportRequestService implements RequestReportUseCase {
                             repo.updateStatus(job.getId(), "FAILED", 0, null)
                                     .subscribeOn(Schedulers.boundedElastic())
                                     .doOnError(
-                                            err ->
-                                                    log.error(
-                                                            "Failed to update status to FAILED for"
-                                                                    + " job {}: {}",
-                                                            job.getId(),
-                                                            err.getMessage()))
+                                            err -> log.error(
+                                                    "Failed to update status to FAILED for"
+                                                            + " job {}: {}",
+                                                    job.getId(),
+                                                    err.getMessage()))
                                     .subscribe();
                         })
                 .subscribe();
@@ -114,12 +111,11 @@ public class ReportRequestService implements RequestReportUseCase {
     public Mono<ReportJob> getStatus(String jobId) {
         return TenantContext.getSchoolId()
                 .flatMap(
-                        sid ->
-                                repo.findByIdAndSchoolId(jobId, sid)
-                                        .switchIfEmpty(
-                                                Mono.error(
-                                                        new ResourceNotFoundException(
-                                                                "ReportJob", jobId))));
+                        sid -> repo.findByIdAndSchoolId(jobId, sid)
+                                .switchIfEmpty(
+                                        Mono.error(
+                                                new ResourceNotFoundException(
+                                                        "ReportJob", jobId))));
     }
 
     @Override
