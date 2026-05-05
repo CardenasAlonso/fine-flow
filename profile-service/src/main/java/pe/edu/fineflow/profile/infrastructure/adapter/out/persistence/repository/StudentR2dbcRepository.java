@@ -11,7 +11,8 @@ import reactor.core.publisher.Mono;
 public interface StudentR2dbcRepository extends R2dbcRepository<StudentEntity, String> {
     Mono<StudentEntity> findByIdAndSchoolId(String id, String schoolId);
 
-    Flux<StudentEntity> findAllBySchoolId(String schoolId);
+    @Query("SELECT * FROM STUDENTS WHERE school_id = :schoolId OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<StudentEntity> findAllBySchoolId(String schoolId, int offset, int limit);
 
     Flux<StudentEntity> findAllBySectionIdAndSchoolId(String sectionId, String schoolId);
 

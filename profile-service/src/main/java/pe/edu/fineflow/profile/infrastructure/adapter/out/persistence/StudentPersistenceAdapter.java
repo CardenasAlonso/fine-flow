@@ -1,5 +1,6 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.out.persistence;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.profile.domain.model.Student;
 import pe.edu.fineflow.profile.domain.port.out.StudentRepositoryPort;
@@ -31,8 +32,10 @@ public class StudentPersistenceAdapter implements StudentRepositoryPort {
     }
 
     @Override
-    public Flux<Student> findAllBySchoolId(String schoolId) {
-        return repo.findAllBySchoolId(schoolId).map(mapper::toDomain);
+    public Flux<Student> findAllBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repo.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override

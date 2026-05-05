@@ -1,5 +1,6 @@
 package pe.edu.fineflow.profile.domain.port.out;
 
+import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.profile.domain.model.Guardian;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -9,7 +10,7 @@ public interface GuardianRepositoryPort {
 
     Mono<Guardian> findById(String id);
 
-    Flux<Guardian> findAllBySchoolId(String schoolId);
+    Flux<Guardian> findAllBySchoolId(String schoolId, Pageable pageable);
 
     Flux<Guardian> findAllByStudentId(String studentId);
 

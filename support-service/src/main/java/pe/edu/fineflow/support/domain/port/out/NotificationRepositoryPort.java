@@ -1,5 +1,6 @@
 package pe.edu.fineflow.support.domain.port.out;
 
+import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.support.domain.model.Notification;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -10,6 +11,8 @@ public interface NotificationRepositoryPort {
     Flux<Notification> findUnreadByUserIdAndSchoolId(String userId, String schoolId);
 
     Flux<Notification> findByRoleAndSchoolId(String role, String schoolId);
+
+    Flux<Notification> findAllBySchoolId(String schoolId, Pageable pageable);
 
     Mono<Long> countUnreadByUserId(String userId, String schoolId);
 

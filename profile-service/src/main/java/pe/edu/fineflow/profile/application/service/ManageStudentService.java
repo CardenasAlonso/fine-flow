@@ -1,6 +1,7 @@
 package pe.edu.fineflow.profile.application.service;
 
 import java.time.Instant;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.event.EventBus;
 import pe.edu.fineflow.common.event.StudentEnrolledEvent;
@@ -98,6 +99,11 @@ public class ManageStudentService implements ManageStudentUseCase {
     public Flux<Student> findAllBySection(String s) {
         return TenantContext.getSchoolId()
                 .flatMapMany(sid -> repo.findAllBySectionIdAndSchoolId(s, sid));
+    }
+
+    @Override
+    public Flux<Student> findAll(Pageable pageable) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, pageable));
     }
 
     @Override

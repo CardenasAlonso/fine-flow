@@ -1,6 +1,7 @@
 package pe.edu.fineflow.support.infrastructure.adapter.out.persistence.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.support.domain.model.AuditLog;
 import pe.edu.fineflow.support.domain.port.out.AuditLogRepositoryPort;
@@ -28,6 +29,27 @@ public class AuditLogRepositoryAdapter implements AuditLogRepositoryPort {
     @Override
     public Flux<AuditLog> findBySchoolIdAndUserId(String schoolId, String userId) {
         return repository.findBySchoolIdAndUserId(schoolId, userId).map(this::toModel);
+    }
+
+    @Override
+    public Flux<AuditLog> findAll(Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findAll(offset, limit).map(this::toModel);
+    }
+
+    @Override
+    public Flux<AuditLog> findByAction(String action, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findByAction(action, offset, limit).map(this::toModel);
+    }
+
+    @Override
+    public Flux<AuditLog> findByUserId(String userId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findByUserId(userId, offset, limit).map(this::toModel);
     }
 
     private AuditLogEntity toEntity(AuditLog m) {

@@ -24,6 +24,9 @@ public class JwtProvider {
     @Value("${fineflow.jwt.refresh-token-ms:604800000}")
     private long refreshTokenMs;
 
+    @Value("${fineflow.jwt.bcrypt-strength:10}")
+    private int bcryptStrength;
+
     private SecretKey signingKey;
 
     @PostConstruct
@@ -52,7 +55,7 @@ public class JwtProvider {
                 .claim("type", "REFRESH")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenMs))
-                .id(UUID.randomUUID().toString())
+                .id(jti)
                 .signWith(signingKey)
                 .compact();
     }
@@ -82,5 +85,19 @@ public class JwtProvider {
 
     public long getRefreshTokenMs() {
         return refreshTokenMs;
+    }
+
+    public String hashToken(String token) {
+        try {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(token.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("SHA-256 hashing failed", e);
+        }
     }
 }

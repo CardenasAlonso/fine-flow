@@ -2,6 +2,7 @@ package pe.edu.fineflow.evaluation.application.port.in;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.evaluation.domain.model.Attendance;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,7 +14,7 @@ public interface RecordAttendanceUseCase {
 
     Mono<Attendance> recordQrEntry(String qrToken, String schoolId);
 
-    Flux<Attendance> findByStudent(String studentId);
+    Flux<Attendance> findByStudent(String studentId, Pageable pageable);
 
-    Flux<Attendance> findByDate(LocalDate date);
+    Flux<Attendance> findByDate(LocalDate date, Pageable pageable);
 }

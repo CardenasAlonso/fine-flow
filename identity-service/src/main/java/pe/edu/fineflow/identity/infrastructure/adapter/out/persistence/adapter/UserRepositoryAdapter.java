@@ -27,6 +27,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     @Override
+    public Mono<User> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<User> findByEmailAndSchoolId(String email, String schoolId) {
         return repository.findByEmailAndSchoolId(email, schoolId).map(mapper::toDomain);
     }

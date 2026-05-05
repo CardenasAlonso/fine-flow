@@ -2,6 +2,7 @@ package pe.edu.fineflow.support.infrastructure.adapter.out.persistence.adapter;
 
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.support.domain.model.Notification;
 import pe.edu.fineflow.support.domain.port.out.NotificationRepositoryPort;
@@ -29,6 +30,13 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
     @Override
     public Flux<Notification> findByRoleAndSchoolId(String role, String schoolId) {
         return repository.findByTargetRoleAndSchoolId(role, schoolId).map(this::toModel);
+    }
+
+    @Override
+    public Flux<Notification> findAllBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(this::toModel);
     }
 
     @Override

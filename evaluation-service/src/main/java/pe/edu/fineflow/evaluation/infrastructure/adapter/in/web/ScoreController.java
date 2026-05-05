@@ -1,6 +1,8 @@
 package pe.edu.fineflow.evaluation.infrastructure.adapter.in.web;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +49,22 @@ public class ScoreController {
 
     @GetMapping("/student/{studentId}")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER','STUDENT','GUARDIAN')")
-    public Flux<ScoreDto.Response> findByStudent(@PathVariable String studentId) {
-        return useCase.findByStudent(studentId).map(this::toResponse);
+    public Flux<ScoreDto.Response> findByStudent(
+            @PathVariable String studentId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return useCase.findByStudent(studentId, pageable).map(this::toResponse);
     }
 
     @GetMapping("/task/{classTaskId}")
     @PreAuthorize("hasAnyRole('TEACHER','ADMIN','COORDINATOR')")
-    public Flux<ScoreDto.Response> findByTask(@PathVariable String classTaskId) {
-        return useCase.findByClassTask(classTaskId).map(this::toResponse);
+    public Flux<ScoreDto.Response> findByTask(
+            @PathVariable String classTaskId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return useCase.findByClassTask(classTaskId, pageable).map(this::toResponse);
     }
 
     private ScoreDto.Response toResponse(StudentScore score) {

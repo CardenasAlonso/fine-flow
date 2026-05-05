@@ -3,6 +3,7 @@ package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,20 @@ public class SectionController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
-    public Flux<SectionDto.Response> findAll() {
-        return useCase.findAll().map(this::toResponse);
+    public Flux<SectionDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = Pageable.of(page, size);
+        return useCase.findAll(pageable).map(this::toResponse);
+    }
+
+    @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    public Flux<SectionDto.Response> findAllActive(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = Pageable.of(page, size);
+        return useCase.findAllActive(pageable).map(this::toResponse);
     }
 
     @GetMapping("/{id}")

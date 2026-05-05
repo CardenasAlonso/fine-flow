@@ -1,6 +1,8 @@
 package pe.edu.fineflow.support.infrastructure.adapter.in.web;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.fineflow.support.application.port.in.ManageNotificationUseCase;
@@ -23,6 +25,15 @@ public class NotificationController {
     @PreAuthorize("isAuthenticated()")
     public Flux<Notification> findMy() {
         return useCase.findMyNotifications();
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
+    public Flux<Notification> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return useCase.findAll(pageable);
     }
 
     @GetMapping("/count")

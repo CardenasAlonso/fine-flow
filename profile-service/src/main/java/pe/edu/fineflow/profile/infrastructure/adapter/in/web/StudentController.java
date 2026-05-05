@@ -2,6 +2,8 @@ package pe.edu.fineflow.profile.infrastructure.adapter.in.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +30,11 @@ public class StudentController {
     @GetMapping
     @Operation(summary = "Listar estudiantes del colegio autenticado")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
-    public Flux<StudentDto.Response> findAll() {
-        return useCase.search("").map(this::toResponse);
+    public Flux<StudentDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return useCase.findAll(pageable).map(this::toResponse);
     }
 
     @GetMapping("/section/{sectionId}")

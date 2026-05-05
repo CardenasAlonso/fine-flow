@@ -1,6 +1,7 @@
 package pe.edu.fineflow.evaluation.application.service;
 
 import java.time.Instant;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.event.EventBus;
 import pe.edu.fineflow.common.event.ScoreRegisteredEvent;
@@ -90,14 +91,14 @@ public class RegisterScoreService implements RegisterScoreUseCase {
     }
 
     @Override
-    public Flux<StudentScore> findByStudent(String sid) {
+    public Flux<StudentScore> findByStudent(String sid, Pageable pageable) {
         return TenantContext.getSchoolId()
-                .flatMapMany(school -> repo.findByStudentIdAndSchoolId(sid, school));
+                .flatMapMany(school -> repo.findByStudentIdAndSchoolId(sid, school, pageable));
     }
 
     @Override
-    public Flux<StudentScore> findByClassTask(String tid) {
+    public Flux<StudentScore> findByClassTask(String tid, Pageable pageable) {
         return TenantContext.getSchoolId()
-                .flatMapMany(school -> repo.findByClassTaskIdAndSchoolId(tid, school));
+                .flatMapMany(school -> repo.findByClassTaskIdAndSchoolId(tid, school, pageable));
     }
 }

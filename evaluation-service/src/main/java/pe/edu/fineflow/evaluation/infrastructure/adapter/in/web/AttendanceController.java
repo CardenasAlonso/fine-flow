@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,15 +57,22 @@ public class AttendanceController {
 
     @GetMapping("/student/{studentId}")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER','GUARDIAN','STUDENT')")
-    public Flux<AttendanceDto.Response> findByStudent(@PathVariable String studentId) {
-        return useCase.findByStudent(studentId).map(this::toResponse);
+    public Flux<AttendanceDto.Response> findByStudent(
+            @PathVariable String studentId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return useCase.findByStudent(studentId, pageable).map(this::toResponse);
     }
 
     @GetMapping("/date/{date}")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
     public Flux<AttendanceDto.Response> findByDate(
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return useCase.findByDate(date).map(this::toResponse);
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return useCase.findByDate(date, pageable).map(this::toResponse);
     }
 
     private AttendanceDto.Response toResponse(Attendance attendance) {

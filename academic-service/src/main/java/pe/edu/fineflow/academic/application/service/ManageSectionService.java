@@ -2,6 +2,7 @@ package pe.edu.fineflow.academic.application.service;
 
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageSectionUseCase;
 import pe.edu.fineflow.academic.domain.model.Section;
@@ -54,8 +55,13 @@ public class ManageSectionService implements ManageSectionUseCase {
     }
 
     @Override
-    public Flux<Section> findAll() {
-        return TenantContext.getSchoolId().flatMapMany(repository::findAllBySchoolId);
+    public Flux<Section> findAll(Pageable pageable) {
+        return TenantContext.getSchoolId().flatMapMany(schoolId -> repository.findAllBySchoolId(schoolId, pageable));
+    }
+
+    @Override
+    public Flux<Section> findAllActive(Pageable pageable) {
+        return TenantContext.getSchoolId().flatMapMany(schoolId -> repository.findAllActiveBySchoolId(schoolId, pageable));
     }
 
     @Override

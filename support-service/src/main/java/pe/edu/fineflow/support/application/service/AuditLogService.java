@@ -1,14 +1,17 @@
 package pe.edu.fineflow.support.application.service;
 
 import java.time.Instant;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.util.UuidGenerator;
+import pe.edu.fineflow.support.application.port.in.ManageAuditLogUseCase;
 import pe.edu.fineflow.support.domain.model.AuditLog;
 import pe.edu.fineflow.support.domain.port.out.AuditLogRepositoryPort;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class AuditLogService {
+public class AuditLogService implements ManageAuditLogUseCase {
     private final AuditLogRepositoryPort repo;
 
     public AuditLogService(AuditLogRepositoryPort repo) {
@@ -36,5 +39,20 @@ public class AuditLogService {
         log.setResult(result);
         log.setCreatedAt(Instant.now());
         return repo.save(log);
+    }
+
+    @Override
+    public Flux<AuditLog> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    @Override
+    public Flux<AuditLog> findByAction(String action, Pageable pageable) {
+        return repo.findByAction(action, pageable);
+    }
+
+    @Override
+    public Flux<AuditLog> findByUserId(String userId, Pageable pageable) {
+        return repo.findByUserId(userId, pageable);
     }
 }

@@ -2,6 +2,7 @@ package pe.edu.fineflow.profile.application.service;
 
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.exception.ResourceNotFoundException;
 import pe.edu.fineflow.common.tenant.TenantContext;
@@ -58,8 +59,8 @@ public class ManageGuardianService implements ManageGuardianUseCase {
     }
 
     @Override
-    public Flux<Guardian> findAll() {
-        return TenantContext.getSchoolId().flatMapMany(repository::findAllBySchoolId);
+    public Flux<Guardian> findAll(Pageable pageable) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repository.findAllBySchoolId(sid, pageable));
     }
 
     @Override

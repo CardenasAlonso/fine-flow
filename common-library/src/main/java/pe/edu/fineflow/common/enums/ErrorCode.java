@@ -15,6 +15,7 @@ public enum ErrorCode {
     ACCESS_DENIED("AUTH_005", "No tiene permisos para esta operación", HttpStatus.FORBIDDEN),
     ACCOUNT_LOCKED(
             "AUTH_006", "Cuenta bloqueada por demasiados intentos fallidos", HttpStatus.LOCKED),
+    USER_NOT_FOUND("AUTH_007", "Usuario no encontrado", HttpStatus.NOT_FOUND),
 
     // Tenant
     TENANT_NOT_FOUND("TENANT_001", "Institución educativa no encontrada", HttpStatus.NOT_FOUND),

@@ -59,6 +59,8 @@ eureka:
     enabled: false
 
 fineflow:
+  cors:
+    allowed-origins: http://localhost:4200,http://localhost:8080
   jwt:
     secret: ${JWT_SECRET:dGVzdC1zZWNyZXQta2V5LWZvci1kZXYtMjU2LWJpdHM=}
 

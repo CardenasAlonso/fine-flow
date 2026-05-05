@@ -1,6 +1,7 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.academic.domain.model.Section;
 import pe.edu.fineflow.academic.domain.port.out.SectionRepositoryPort;
@@ -28,6 +29,25 @@ public class SectionRepositoryAdapter implements SectionRepositoryPort {
     @Override
     public Flux<Section> findAllBySchoolId(String schoolId) {
         return repository.findAllBySchoolId(schoolId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<Section> findAllActiveBySchoolId(String schoolId) {
+        return repository.findAllBySchoolId(schoolId).map(mapper::toDomain).filter(Section::getIsActive);
+    }
+
+    @Override
+    public Flux<Section> findAllBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<Section> findAllActiveBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findAllActiveBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override

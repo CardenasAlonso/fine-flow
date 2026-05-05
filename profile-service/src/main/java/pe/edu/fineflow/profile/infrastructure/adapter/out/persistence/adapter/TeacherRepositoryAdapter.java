@@ -1,6 +1,7 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.out.persistence.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.profile.domain.model.Teacher;
 import pe.edu.fineflow.profile.domain.port.out.TeacherRepositoryPort;
@@ -27,8 +28,10 @@ public class TeacherRepositoryAdapter implements TeacherRepositoryPort {
     }
 
     @Override
-    public Flux<Teacher> findAllBySchoolId(String schoolId) {
-        return repository.findAllBySchoolId(schoolId).map(mapper::toDomain);
+    public Flux<Teacher> findAllBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package pe.edu.fineflow.profile.application.service;
 
 import java.time.Instant;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.exception.BusinessException;
 import pe.edu.fineflow.common.exception.ResourceNotFoundException;
@@ -79,7 +80,7 @@ public class ManageTeacherService implements ManageTeacherUseCase {
     }
 
     @Override
-    public Flux<Teacher> findAll() {
-        return TenantContext.getSchoolId().flatMapMany(repo::findAllBySchoolId);
+    public Flux<Teacher> findAll(Pageable pageable) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, pageable));
     }
 }

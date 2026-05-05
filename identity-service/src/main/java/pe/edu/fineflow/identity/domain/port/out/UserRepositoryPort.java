@@ -9,6 +9,8 @@ public interface UserRepositoryPort {
 
     Mono<User> findById(String id);
 
+    Mono<User> findByIdAndSchoolId(String id, String schoolId);
+
     Mono<User> findByEmailAndSchoolId(String email, String schoolId);
 
     Mono<User> findByEmail(String email);

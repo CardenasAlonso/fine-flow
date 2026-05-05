@@ -25,6 +25,14 @@ public class AuthException extends BusinessException {
         return new AuthException(ErrorCode.TOKEN_INVALID);
     }
 
+    public static AuthException tokenRevoked() {
+        return new AuthException(ErrorCode.TOKEN_REVOKED);
+    }
+
+    public static AuthException userNotFound() {
+        return new AuthException(ErrorCode.USER_NOT_FOUND);
+    }
+
     public static AuthException accountLocked() {
         return new AuthException(ErrorCode.ACCOUNT_LOCKED);
     }

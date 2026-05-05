@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.event.AttendanceRecordedEvent;
 import pe.edu.fineflow.common.event.EventBus;
@@ -102,14 +103,14 @@ public class RecordAttendanceService implements RecordAttendanceUseCase {
     }
 
     @Override
-    public Flux<Attendance> findByStudent(String studentId) {
+    public Flux<Attendance> findByStudent(String studentId, Pageable pageable) {
         return TenantContext.getSchoolId()
-                .flatMapMany(sid -> repo.findByStudentIdAndSchoolId(studentId, sid));
+                .flatMapMany(sid -> repo.findByStudentIdAndSchoolId(studentId, sid, pageable));
     }
 
     @Override
-    public Flux<Attendance> findByDate(LocalDate date) {
+    public Flux<Attendance> findByDate(LocalDate date, Pageable pageable) {
         return TenantContext.getSchoolId()
-                .flatMapMany(sid -> repo.findByDateAndSchoolId(date, sid));
+                .flatMapMany(sid -> repo.findByDateAndSchoolId(date, sid, pageable));
     }
 }

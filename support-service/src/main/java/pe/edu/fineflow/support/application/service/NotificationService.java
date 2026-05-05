@@ -2,6 +2,7 @@ package pe.edu.fineflow.support.application.service;
 
 import jakarta.annotation.PostConstruct;
 import java.time.Instant;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.event.AttendanceRecordedEvent;
 import pe.edu.fineflow.common.event.EventBus;
@@ -103,6 +104,11 @@ public class NotificationService implements ManageNotificationUseCase {
     public Flux<Notification> findMyNotifications() {
         return TenantContext.getPrincipal()
                 .flatMapMany(p -> repo.findUnreadByUserIdAndSchoolId(p.userId(), p.schoolId()));
+    }
+
+    @Override
+    public Flux<Notification> findAll(Pageable pageable) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, pageable));
     }
 
     @Override
