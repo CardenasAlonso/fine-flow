@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +26,8 @@ public class TimeSlotController {
     public Flux<TimeSlotDto> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = Pageable.of(page, size);
-        return useCase.findAll(pageable).map(this::toDto);
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toDto);
     }
 
     @GetMapping("/active")
@@ -37,8 +36,8 @@ public class TimeSlotController {
     public Flux<TimeSlotDto> findAllActive(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = Pageable.of(page, size);
-        return useCase.findAllActive(pageable).map(this::toDto);
+        int offset = page * size;
+        return useCase.findAllActive(offset, size).map(this::toDto);
     }
 
     @GetMapping("/{id}")

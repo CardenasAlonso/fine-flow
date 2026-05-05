@@ -80,7 +80,7 @@ public class ManageTeacherService implements ManageTeacherUseCase {
     }
 
     @Override
-    public Flux<Teacher> findAll(Pageable pageable) {
-        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, pageable));
+    public Flux<Teacher> findAll(int offset, int limit) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, offset, limit));
     }
 }

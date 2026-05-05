@@ -59,8 +59,8 @@ public class ManageGuardianService implements ManageGuardianUseCase {
     }
 
     @Override
-    public Flux<Guardian> findAll(Pageable pageable) {
-        return TenantContext.getSchoolId().flatMapMany(sid -> repository.findAllBySchoolId(sid, pageable));
+    public Flux<Guardian> findAll(int offset, int limit) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repository.findAllBySchoolId(sid, offset, limit));
     }
 
     @Override

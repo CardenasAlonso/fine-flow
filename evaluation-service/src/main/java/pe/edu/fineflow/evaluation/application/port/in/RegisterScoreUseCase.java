@@ -1,6 +1,5 @@
 package pe.edu.fineflow.evaluation.application.port.in;
 
-import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.evaluation.domain.model.StudentScore;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,7 +11,7 @@ public interface RegisterScoreUseCase {
 
     Mono<Void> delete(String id);
 
-    Flux<StudentScore> findByStudent(String studentId, Pageable pageable);
+    Flux<StudentScore> findByStudent(String studentId, int offset, int limit);
 
-    Flux<StudentScore> findByClassTask(String classTaskId, Pageable pageable);
+    Flux<StudentScore> findByClassTask(String classTaskId, int offset, int limit);
 }

@@ -1,6 +1,5 @@
 package pe.edu.fineflow.academic.domain.port.out;
 
-import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.academic.domain.model.TimeSlot;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,9 +13,9 @@ public interface TimeSlotRepositoryPort {
 
     Flux<TimeSlot> findAllActiveBySchoolId(String schoolId);
 
-    Flux<TimeSlot> findAllBySchoolId(String schoolId, Pageable pageable);
+    Flux<TimeSlot> findAllBySchoolId(String schoolId, int offset, int limit);
 
-    Flux<TimeSlot> findAllActiveBySchoolId(String schoolId, Pageable pageable);
+    Flux<TimeSlot> findAllActiveBySchoolId(String schoolId, int offset, int limit);
 
     Mono<Void> deleteById(String id);
 }

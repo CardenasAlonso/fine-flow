@@ -1,6 +1,5 @@
 package pe.edu.fineflow.academic.domain.port.out;
 
-import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.academic.domain.model.Section;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,9 +13,9 @@ public interface SectionRepositoryPort {
 
     Flux<Section> findAllActiveBySchoolId(String schoolId);
 
-    Flux<Section> findAllBySchoolId(String schoolId, Pageable pageable);
+    Flux<Section> findAllBySchoolId(String schoolId, int offset, int limit);
 
-    Flux<Section> findAllActiveBySchoolId(String schoolId, Pageable pageable);
+    Flux<Section> findAllActiveBySchoolId(String schoolId, int offset, int limit);
 
     Flux<Section> findAllBySchoolYearId(String schoolYearId);
 

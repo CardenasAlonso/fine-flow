@@ -38,6 +38,16 @@ public class TimeSlotRepositoryAdapter implements TimeSlotRepositoryPort {
     }
 
     @Override
+    public Flux<TimeSlot> findAllBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<TimeSlot> findAllActiveBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolIdAndIsActive(schoolId, 1, offset, limit).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Void> deleteById(String id) {
         return repository.deleteById(id);
     }

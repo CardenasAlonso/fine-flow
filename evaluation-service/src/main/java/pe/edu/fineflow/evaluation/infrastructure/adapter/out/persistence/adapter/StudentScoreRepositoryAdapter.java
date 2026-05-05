@@ -1,7 +1,6 @@
 package pe.edu.fineflow.evaluation.infrastructure.adapter.out.persistence.adapter;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.evaluation.domain.model.StudentScore;
 import pe.edu.fineflow.evaluation.domain.port.out.StudentScoreRepositoryPort;
@@ -27,16 +26,12 @@ public class StudentScoreRepositoryAdapter implements StudentScoreRepositoryPort
     }
 
     @Override
-    public Flux<StudentScore> findByStudentIdAndSchoolId(String studentId, String schoolId, Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+    public Flux<StudentScore> findByStudentIdAndSchoolId(String studentId, String schoolId, int offset, int limit) {
         return repository.findByStudentIdAndSchoolId(studentId, schoolId, offset, limit).map(this::toModel);
     }
 
     @Override
-    public Flux<StudentScore> findByClassTaskIdAndSchoolId(String classTaskId, String schoolId, Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+    public Flux<StudentScore> findByClassTaskIdAndSchoolId(String classTaskId, String schoolId, int offset, int limit) {
         return repository.findByClassTaskIdAndSchoolId(classTaskId, schoolId, offset, limit).map(this::toModel);
     }
 

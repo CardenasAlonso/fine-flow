@@ -1,6 +1,5 @@
 package pe.edu.fineflow.profile.domain.port.out;
 
-import org.springframework.data.domain.Pageable;
 import pe.edu.fineflow.profile.domain.model.Teacher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -10,7 +9,7 @@ public interface TeacherRepositoryPort {
 
     Mono<Teacher> findByIdAndSchoolId(String id, String schoolId);
 
-    Flux<Teacher> findAllBySchoolId(String schoolId, Pageable pageable);
+    Flux<Teacher> findAllBySchoolId(String schoolId, int offset, int limit);
 
     Mono<Boolean> existsByDocumentNumberAndSchoolId(String documentNumber, String schoolId);
 

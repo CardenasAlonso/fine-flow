@@ -91,14 +91,14 @@ public class RegisterScoreService implements RegisterScoreUseCase {
     }
 
     @Override
-    public Flux<StudentScore> findByStudent(String sid, Pageable pageable) {
+    public Flux<StudentScore> findByStudent(String sid, int offset, int limit) {
         return TenantContext.getSchoolId()
-                .flatMapMany(school -> repo.findByStudentIdAndSchoolId(sid, school, pageable));
+                .flatMapMany(school -> repo.findByStudentIdAndSchoolId(sid, school, offset, limit));
     }
 
     @Override
-    public Flux<StudentScore> findByClassTask(String tid, Pageable pageable) {
+    public Flux<StudentScore> findByClassTask(String tid, int offset, int limit) {
         return TenantContext.getSchoolId()
-                .flatMapMany(school -> repo.findByClassTaskIdAndSchoolId(tid, school, pageable));
+                .flatMapMany(school -> repo.findByClassTaskIdAndSchoolId(tid, school, offset, limit));
     }
 }

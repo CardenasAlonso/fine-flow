@@ -102,8 +102,8 @@ public class ManageStudentService implements ManageStudentUseCase {
     }
 
     @Override
-    public Flux<Student> findAll(Pageable pageable) {
-        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, pageable));
+    public Flux<Student> findAll(int offset, int limit) {
+        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, offset, limit));
     }
 
     @Override

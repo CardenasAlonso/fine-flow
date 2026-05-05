@@ -61,8 +61,8 @@ public class AttendanceController {
             @PathVariable String studentId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return useCase.findByStudent(studentId, pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findByStudent(studentId, offset, size).map(this::toResponse);
     }
 
     @GetMapping("/date/{date}")
@@ -71,8 +71,8 @@ public class AttendanceController {
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return useCase.findByDate(date, pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findByDate(date, offset, size).map(this::toResponse);
     }
 
     private AttendanceDto.Response toResponse(Attendance attendance) {

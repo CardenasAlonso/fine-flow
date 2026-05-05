@@ -32,9 +32,7 @@ public class StudentPersistenceAdapter implements StudentRepositoryPort {
     }
 
     @Override
-    public Flux<Student> findAllBySchoolId(String schoolId, Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+    public Flux<Student> findAllBySchoolId(String schoolId, int offset, int limit) {
         return repo.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 

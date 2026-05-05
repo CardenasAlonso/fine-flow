@@ -55,12 +55,12 @@ public class ManageTimeSlotService implements ManageTimeSlotUseCase {
     }
 
     @Override
-    public Flux<TimeSlot> findAll() {
-        return TenantContext.getSchoolId().flatMapMany(repository::findAllBySchoolId);
+    public Flux<TimeSlot> findAll(int offset, int limit) {
+        return TenantContext.getSchoolId().flatMapMany(schoolId -> repository.findAllBySchoolId(schoolId, offset, limit));
     }
 
     @Override
-    public Flux<TimeSlot> findAllActive() {
-        return TenantContext.getSchoolId().flatMapMany(repository::findAllActiveBySchoolId);
+    public Flux<TimeSlot> findAllActive(int offset, int limit) {
+        return TenantContext.getSchoolId().flatMapMany(schoolId -> repository.findAllActiveBySchoolId(schoolId, offset, limit));
     }
 }

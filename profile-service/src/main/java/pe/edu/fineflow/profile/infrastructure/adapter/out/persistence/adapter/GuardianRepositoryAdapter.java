@@ -1,7 +1,6 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.out.persistence.adapter;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.profile.domain.model.Guardian;
 import pe.edu.fineflow.profile.domain.port.out.GuardianRepositoryPort;
@@ -27,9 +26,7 @@ public class GuardianRepositoryAdapter implements GuardianRepositoryPort {
     }
 
     @Override
-    public Flux<Guardian> findAllBySchoolId(String schoolId, Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+    public Flux<Guardian> findAllBySchoolId(String schoolId, int offset, int limit) {
         return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 

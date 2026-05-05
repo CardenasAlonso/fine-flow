@@ -33,8 +33,8 @@ public class StudentController {
     public Flux<StudentDto.Response> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return useCase.findAll(pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
     }
 
     @GetMapping("/section/{sectionId}")

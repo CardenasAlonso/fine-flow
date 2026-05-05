@@ -103,14 +103,14 @@ public class RecordAttendanceService implements RecordAttendanceUseCase {
     }
 
     @Override
-    public Flux<Attendance> findByStudent(String studentId, Pageable pageable) {
+    public Flux<Attendance> findByStudent(String studentId, int offset, int limit) {
         return TenantContext.getSchoolId()
-                .flatMapMany(sid -> repo.findByStudentIdAndSchoolId(studentId, sid, pageable));
+                .flatMapMany(sid -> repo.findByStudentIdAndSchoolId(studentId, sid, offset, limit));
     }
 
     @Override
-    public Flux<Attendance> findByDate(LocalDate date, Pageable pageable) {
+    public Flux<Attendance> findByDate(LocalDate date, int offset, int limit) {
         return TenantContext.getSchoolId()
-                .flatMapMany(sid -> repo.findByDateAndSchoolId(date, sid, pageable));
+                .flatMapMany(sid -> repo.findByDateAndSchoolId(date, sid, offset, limit));
     }
 }

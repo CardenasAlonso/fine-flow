@@ -1,9 +1,9 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,30 +22,34 @@ public class SectionController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    @Operation(summary = "Listar todas las secciones")
     public Flux<SectionDto.Response> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = Pageable.of(page, size);
-        return useCase.findAll(pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
     }
 
     @GetMapping("/active")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    @Operation(summary = "Listar secciones activas")
     public Flux<SectionDto.Response> findAllActive(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = Pageable.of(page, size);
-        return useCase.findAllActive(pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findAllActive(offset, size).map(this::toResponse);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    @Operation(summary = "Obtener sección por ID")
     public Mono<SectionDto.Response> findById(@PathVariable String id) {
         return useCase.findById(id).map(this::toResponse);
     }
 
     @GetMapping("/school-year/{schoolYearId}")
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    @Operation(summary = "Listar secciones por año escolar")
     public Flux<SectionDto.Response> findBySchoolYear(@PathVariable String schoolYearId) {
         return useCase.findBySchoolYear(schoolYearId).map(this::toResponse);
     }
@@ -53,12 +57,14 @@ public class SectionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear nueva sección")
     public Mono<SectionDto.Response> create(@Valid @RequestBody SectionDto.Create request) {
         return useCase.create(toDomain(request)).map(this::toResponse);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar sección")
     public Mono<SectionDto.Response> update(
             @PathVariable String id, @Valid @RequestBody SectionDto.Update request) {
         return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
@@ -67,33 +73,34 @@ public class SectionController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar sección")
     public Mono<Void> delete(@PathVariable String id) {
         return useCase.delete(id);
     }
 
-    private SectionDto.Response toResponse(Section section) {
+    private SectionDto.Response toResponse(Section s) {
         return new SectionDto.Response(
-                section.getId(),
-                section.getName(),
-                section.getMaxCapacity(),
-                section.getTutorId(),
-                section.getIsActive());
+                s.getId(),
+                s.getName(),
+                s.getMaxCapacity(),
+                s.getTutorId(),
+                s.getIsActive());
     }
 
     private Section toDomain(SectionDto.Create dto) {
-        Section section = new Section();
-        section.setName(dto.getName());
-        section.setMaxCapacity(dto.getMaxCapacity());
-        section.setSchoolYearId(dto.getSchoolYearId());
-        return section;
+        Section s = new Section();
+        s.setName(dto.getName());
+        s.setMaxCapacity(dto.getMaxCapacity());
+        s.setSchoolYearId(dto.getSchoolYearId());
+        return s;
     }
 
     private Section toDomainUpdate(SectionDto.Update dto) {
-        Section section = new Section();
-        section.setName(dto.getName());
-        section.setMaxCapacity(dto.getMaxCapacity());
-        section.setTutorId(dto.getTutorId());
-        section.setIsActive(dto.getIsActive());
-        return section;
+        Section s = new Section();
+        s.setName(dto.getName());
+        s.setMaxCapacity(dto.getMaxCapacity());
+        s.setTutorId(dto.getTutorId());
+        s.setIsActive(dto.getIsActive());
+        return s;
     }
 }

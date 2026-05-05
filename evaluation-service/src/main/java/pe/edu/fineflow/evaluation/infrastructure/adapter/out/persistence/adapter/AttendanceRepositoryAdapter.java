@@ -3,7 +3,6 @@ package pe.edu.fineflow.evaluation.infrastructure.adapter.out.persistence.adapte
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pe.edu.fineflow.evaluation.domain.model.Attendance;
 import pe.edu.fineflow.evaluation.domain.port.out.AttendanceRepositoryPort;
@@ -39,16 +38,12 @@ public class AttendanceRepositoryAdapter implements AttendanceRepositoryPort {
     }
 
     @Override
-    public Flux<Attendance> findByStudentIdAndSchoolId(String studentId, String schoolId, Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+    public Flux<Attendance> findByStudentIdAndSchoolId(String studentId, String schoolId, int offset, int limit) {
         return repository.findByStudentIdAndSchoolId(studentId, schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override
-    public Flux<Attendance> findByDateAndSchoolId(LocalDate date, String schoolId, Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+    public Flux<Attendance> findByDateAndSchoolId(LocalDate date, String schoolId, int offset, int limit) {
         return repository.findByAttendanceDateAndSchoolId(date, schoolId, offset, limit).map(mapper::toDomain);
     }
 

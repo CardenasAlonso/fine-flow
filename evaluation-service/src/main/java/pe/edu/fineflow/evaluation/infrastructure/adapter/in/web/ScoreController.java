@@ -53,8 +53,8 @@ public class ScoreController {
             @PathVariable String studentId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return useCase.findByStudent(studentId, pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findByStudent(studentId, offset, size).map(this::toResponse);
     }
 
     @GetMapping("/task/{classTaskId}")
@@ -63,8 +63,8 @@ public class ScoreController {
             @PathVariable String classTaskId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return useCase.findByClassTask(classTaskId, pageable).map(this::toResponse);
+        int offset = page * size;
+        return useCase.findByClassTask(classTaskId, offset, size).map(this::toResponse);
     }
 
     private ScoreDto.Response toResponse(StudentScore score) {
