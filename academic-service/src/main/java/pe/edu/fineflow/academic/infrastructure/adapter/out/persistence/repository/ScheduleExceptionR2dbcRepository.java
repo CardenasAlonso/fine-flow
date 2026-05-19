@@ -8,11 +8,10 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface ScheduleExceptionR2dbcRepository
         extends ReactiveCrudRepository<ScheduleExceptionEntity, String> {
-    Flux<ScheduleExceptionEntity> findAllBySchoolIdAndIsActive(String schoolId, Integer isActive);
+    Flux<ScheduleExceptionEntity> findAllBySchoolId(String schoolId);
 
-    Flux<ScheduleExceptionEntity> findAllByClassScheduleIdAndIsActive(
-            String classScheduleId, Integer isActive);
+    Flux<ScheduleExceptionEntity> findAllByClassScheduleId(String classScheduleId);
 
-    Flux<ScheduleExceptionEntity> findAllBySchoolIdAndExceptionDateAndIsActive(
-            String schoolId, java.time.LocalDate exceptionDate, Integer isActive);
+    Flux<ScheduleExceptionEntity> findAllBySchoolIdAndExceptionDate(
+            String schoolId, java.time.LocalDate exceptionDate);
 }

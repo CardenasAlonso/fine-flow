@@ -1,25 +1,18 @@
 package pe.edu.fineflow.identity.infrastructure.adapter.out.persistence.entity;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table("USERS")
-public class UserEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class UserEntity extends BaseTenantEntity {
     @Column("EMAIL")
     private String email;
 
@@ -41,9 +34,11 @@ public class UserEntity {
     @Column("LAST_LOGIN_AT")
     private Instant lastLoginAt;
 
-    @Column("CREATED_AT")
-    private Instant createdAt;
-
+    @LastModifiedDate
     @Column("UPDATED_AT")
     private Instant updatedAt;
+
+    @Version
+    @Column("VERSION")
+    private Long version;
 }

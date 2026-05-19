@@ -1,24 +1,17 @@
 package pe.edu.fineflow.support.infrastructure.adapter.out.persistence.entity;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Table("AUDIT_LOGS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuditLogEntity {
-    @Id private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class AuditLogEntity extends BaseTenantEntity {
     @Column("USER_ID")
     private String userId;
 
@@ -52,7 +45,4 @@ public class AuditLogEntity {
     @Column("DURATION_MS")
     private Long durationMs;
 
-    @CreatedDate
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

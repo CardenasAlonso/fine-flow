@@ -1,17 +1,15 @@
 package pe.edu.fineflow.evaluation.domain.model;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pe.edu.fineflow.common.model.BaseDomainEntity;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Attendance {
-    private String id;
-    private String schoolId;
+public class Attendance extends BaseDomainEntity {
     private String studentId;
     private String courseAssignmentId;
     private LocalDate attendanceDate;
@@ -20,5 +18,4 @@ public class Attendance {
     private String recordMethod;
     private String justificationReason;
     private String registeredBy;
-    private Instant createdAt;
 }

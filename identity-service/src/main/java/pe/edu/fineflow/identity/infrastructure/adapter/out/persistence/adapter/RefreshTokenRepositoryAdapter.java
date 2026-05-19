@@ -32,9 +32,14 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     }
 
     @Override
+    public Mono<RefreshToken> findByTokenHash(String tokenHash) {
+        return repository.findByTokenHash(tokenHash).map(this::toModel);
+    }
+
+    @Override
     public Flux<RefreshToken> findActiveByUserIdAndSchoolId(String userId, String schoolId) {
         return repository
-                .findByUserIdAndSchoolIdAndIsRevoked(userId, schoolId, 0)
+                .findByUserIdAndSchoolIdAndRevokedAtIsNull(userId, schoolId)
                 .map(this::toModel);
     }
 
@@ -44,7 +49,7 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
                 .findByJtiAndSchoolId(jti, schoolId)
                 .flatMap(
                         e -> {
-                            e.setIsRevoked(1);
+                            e.setRevokedAt(Instant.now());
                             return repository.save(e);
                         })
                 .then();
@@ -53,10 +58,10 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     @Override
     public Mono<Void> revokeAllByUserIdAndSchoolId(String userId, String schoolId) {
         return repository
-                .findByUserIdAndSchoolIdAndIsRevoked(userId, schoolId, 0)
+                .findByUserIdAndSchoolIdAndRevokedAtIsNull(userId, schoolId)
                 .flatMap(
                         e -> {
-                            e.setIsRevoked(1);
+                            e.setRevokedAt(Instant.now());
                             return repository.save(e);
                         })
                 .then();
@@ -87,7 +92,8 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
         e.setJti(m.getJti());
         e.setDeviceInfo(m.getDeviceInfo());
         e.setIpAddress(m.getIpAddress());
-        e.setIsRevoked(m.getIsRevoked() != null && m.getIsRevoked() == 1 ? 1 : 0);
+        e.setRevokedAt(m.getRevokedAt());
+        e.setRevokeReason(m.getRevokeReason());
         e.setExpiresAt(m.getExpiresAt());
         e.setCreatedAt(m.getCreatedAt());
         return e;
@@ -97,13 +103,14 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
         return new RefreshToken(
                 e.getId(),
                 e.getSchoolId(),
+                e.getCreatedAt(),
                 e.getUserId(),
                 e.getTokenHash(),
                 e.getJti(),
                 e.getDeviceInfo(),
                 e.getIpAddress(),
-                e.getIsRevoked(),
-                e.getExpiresAt(),
-                e.getCreatedAt());
+                e.getRevokedAt(),
+                e.getRevokeReason(),
+                e.getExpiresAt());
     }
 }

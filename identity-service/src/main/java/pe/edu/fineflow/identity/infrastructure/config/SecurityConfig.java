@@ -32,18 +32,17 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
                 .authorizeExchange(
-                        exchanges ->
-                                exchanges
-                                        .pathMatchers(HttpMethod.OPTIONS)
-                                        .permitAll()
-                                        .pathMatchers("/api/auth/**")
-                                        .permitAll()
-                                        .pathMatchers("/actuator/**")
-                                        .permitAll()
-                                        .pathMatchers("/swagger-ui/**", "/v3/api-docs/**")
-                                        .permitAll()
-                                        .anyExchange()
-                                        .authenticated())
+                        exchanges -> exchanges
+                                .pathMatchers(HttpMethod.OPTIONS)
+                                .permitAll()
+                                .pathMatchers("/api/auth/**")
+                                .permitAll()
+                                .pathMatchers("/actuator/**")
+                                .permitAll()
+                                .pathMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                                .permitAll()
+                                .anyExchange()
+                                .authenticated())
                 .addFilterAt(tenantWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }

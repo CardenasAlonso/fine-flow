@@ -4,23 +4,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("SCHEDULE_EXCEPTIONS")
-public class ScheduleExceptionEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class ScheduleExceptionEntity extends BaseTenantEntity {
     @Column("CLASS_SCHEDULE_ID")
     private String classScheduleId;
 
@@ -50,7 +45,4 @@ public class ScheduleExceptionEntity {
 
     @Column("CREATED_BY")
     private String createdBy;
-
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

@@ -11,6 +11,8 @@ public interface RefreshTokenRepositoryPort {
 
     Mono<RefreshToken> findByTokenHashAndSchoolId(String tokenHash, String schoolId);
 
+    Mono<RefreshToken> findByTokenHash(String tokenHash);
+
     Flux<RefreshToken> findActiveByUserIdAndSchoolId(String userId, String schoolId);
 
     Mono<Void> revokeByJtiAndSchoolId(String jti, String schoolId);

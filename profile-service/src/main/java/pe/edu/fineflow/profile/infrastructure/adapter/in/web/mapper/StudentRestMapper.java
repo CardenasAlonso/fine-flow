@@ -3,10 +3,11 @@ package pe.edu.fineflow.profile.infrastructure.adapter.in.web.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import pe.edu.fineflow.profile.domain.model.Student;
 import pe.edu.fineflow.profile.infrastructure.adapter.in.web.dto.StudentDto;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StudentRestMapper {
 
     @Mapping(target = "id", ignore = true)

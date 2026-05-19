@@ -4,23 +4,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("SCHEDULE_VERSIONS")
-public class ScheduleVersionEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class ScheduleVersionEntity extends BaseTenantEntity {
     @Column("SCHOOL_YEAR_ID")
     private String schoolYearId;
 
@@ -53,9 +48,6 @@ public class ScheduleVersionEntity {
 
     @Column("VALID_UNTIL")
     private LocalDate validUntil;
-
-    @Column("CREATED_AT")
-    private Instant createdAt;
 
     @Column("UPDATED_AT")
     private Instant updatedAt;

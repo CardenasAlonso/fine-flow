@@ -3,6 +3,7 @@ package pe.edu.fineflow.common.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.BufferOverflowStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
@@ -10,7 +11,7 @@ import reactor.core.publisher.Sinks;
 @Component
 public class EventBus {
     private static final Logger log = LoggerFactory.getLogger(EventBus.class);
-    private final Sinks.Many<DomainEvent> sink = Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<DomainEvent> sink = Sinks.many().multicast().onBackpressureBuffer(500, false);
     private final Flux<DomainEvent> flux = sink.asFlux().publish().autoConnect();
 
     public void publish(DomainEvent event) {

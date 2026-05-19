@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.fineflow.common.event.AttendanceRecordedEvent;
 import pe.edu.fineflow.common.event.EventBus;
 import pe.edu.fineflow.common.exception.BusinessException;
@@ -29,6 +30,7 @@ public class RecordAttendanceService implements RecordAttendanceUseCase {
     }
 
     @Override
+    @Transactional
     public Mono<Attendance> recordSingle(Attendance attendance) {
         return TenantContext.getPrincipal()
                 .flatMap(
@@ -67,33 +69,53 @@ public class RecordAttendanceService implements RecordAttendanceUseCase {
     }
 
     @Override
+    @Transactional
     public Flux<Attendance> recordBulk(List<Attendance> list) {
         return TenantContext.getPrincipal()
                 .flatMapMany(
                         principal -> {
-                            List<Attendance> enriched =
-                                    list.stream()
-                                            .map(
-                                                    a -> {
-                                                        a.setId(UuidGenerator.generate());
-                                                        a.setSchoolId(principal.schoolId());
-                                                        a.setRegisteredBy(principal.userId());
-                                                        a.setCreatedAt(Instant.now());
-                                                        return a;
-                                                    })
-                                            .collect(Collectors.toList());
-                            return repo.saveAll(enriched)
-                                    .doOnNext(
-                                            saved ->
-                                                    eventBus.publish(
-                                                            new AttendanceRecordedEvent(
-                                                                    principal.schoolId(),
-                                                                    principal.userId(),
-                                                                    saved.getId(),
-                                                                    saved.getStudentId(),
-                                                                    saved.getStatus(),
-                                                                    saved.getAttendanceDate()
-                                                                            .toString())));
+                            return Flux.fromIterable(list)
+                                    .concatMap(
+                                            attendance ->
+                                                    repo.existsByStudentIdAndDateAndAssignment(
+                                                                    attendance.getStudentId(),
+                                                                    attendance.getAttendanceDate(),
+                                                                    attendance.getCourseAssignmentId(),
+                                                                    principal.schoolId())
+                                                            .flatMap(
+                                                                    exists -> {
+                                                                        if (exists)
+                                                                            return Mono.error(
+                                                                                    BusinessException.conflict(
+                                                                                            "ATTENDANCE_DUPLICATE",
+                                                                                            "Ya existe un registro para este alumno en esta fecha."));
+                                                                        attendance.setId(
+                                                                                UuidGenerator.generate());
+                                                                        attendance.setSchoolId(
+                                                                                principal.schoolId());
+                                                                        attendance.setRegisteredBy(
+                                                                                principal.userId());
+                                                                        attendance.setCreatedAt(
+                                                                                Instant.now());
+                                                                        return Mono.just(attendance);
+                                                                    }))
+                                    .collectList()
+                                    .flatMapMany(
+                                            enriched -> {
+                                                if (enriched.isEmpty()) return Flux.empty();
+                                                return repo.saveAll(enriched)
+                                                        .doOnNext(
+                                                                saved ->
+                                                                        eventBus.publish(
+                                                                                new AttendanceRecordedEvent(
+                                                                                        principal.schoolId(),
+                                                                                        principal.userId(),
+                                                                                        saved.getId(),
+                                                                                        saved.getStudentId(),
+                                                                                        saved.getStatus(),
+                                                                                        saved.getAttendanceDate()
+                                                                                                .toString())));
+                                            });
                         });
     }
 

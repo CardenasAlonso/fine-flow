@@ -18,6 +18,6 @@ public interface UserR2dbcRepository extends ReactiveCrudRepository<UserEntity, 
     Flux<UserEntity> findAllBySchoolId(String schoolId);
 
     @Query(
-            "SELECT * FROM USERS WHERE ID = :id AND SCHOOL_ID = :schoolId AND IS_DELETED = 0")
+            "SELECT * FROM USERS WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<UserEntity> findByIdAndSchoolId(String id, String schoolId);
 }

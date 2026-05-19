@@ -89,19 +89,20 @@ public class NotificationRepositoryAdapter implements NotificationRepositoryPort
     }
 
     private Notification toModel(NotificationEntity e) {
-        return new Notification(
-                e.getId(),
-                e.getSchoolId(),
-                e.getUserId(),
-                e.getTargetRole(),
-                e.getNotificationType(),
-                e.getTitle(),
-                e.getBody(),
-                e.getActionUrl(),
-                e.getMetadataJson(),
-                e.getIsRead(),
-                e.getReadAt(),
-                e.getExpiresAt(),
-                e.getCreatedAt());
+        Notification m = new Notification();
+        m.setId(e.getId());
+        m.setSchoolId(e.getSchoolId());
+        m.setUserId(e.getUserId());
+        m.setTargetRole(e.getTargetRole());
+        m.setNotificationType(e.getNotificationType());
+        m.setTitle(e.getTitle());
+        m.setBody(e.getBody());
+        m.setActionUrl(e.getActionUrl());
+        m.setMetadataJson(e.getMetadataJson());
+        m.setIsRead(e.getIsRead());
+        m.setReadAt(e.getReadAt());
+        m.setExpiresAt(e.getExpiresAt());
+        m.setCreatedAt(e.getCreatedAt());
+        return m;
     }
 }

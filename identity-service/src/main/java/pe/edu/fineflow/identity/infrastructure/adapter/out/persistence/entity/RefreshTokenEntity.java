@@ -1,19 +1,12 @@
 package pe.edu.fineflow.identity.infrastructure.adapter.out.persistence.entity;
 
 import java.time.Instant;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Table("REFRESH_TOKENS")
-public class RefreshTokenEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class RefreshTokenEntity extends BaseTenantEntity {
     @Column("USER_ID")
     private String userId;
 
@@ -29,30 +22,14 @@ public class RefreshTokenEntity {
     @Column("IP_ADDRESS")
     private String ipAddress;
 
-    @Column("IS_REVOKED")
-    private Integer isRevoked;
+    @Column("REVOKED_AT")
+    private Instant revokedAt;
+
+    @Column("REVOKE_REASON")
+    private String revokeReason;
 
     @Column("EXPIRES_AT")
     private Instant expiresAt;
-
-    @Column("CREATED_AT")
-    private Instant createdAt;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(String schoolId) {
-        this.schoolId = schoolId;
-    }
 
     public String getUserId() {
         return userId;
@@ -94,12 +71,20 @@ public class RefreshTokenEntity {
         this.ipAddress = ipAddress;
     }
 
-    public Integer getIsRevoked() {
-        return isRevoked;
+    public Instant getRevokedAt() {
+        return revokedAt;
     }
 
-    public void setIsRevoked(Integer isRevoked) {
-        this.isRevoked = isRevoked;
+    public void setRevokedAt(Instant revokedAt) {
+        this.revokedAt = revokedAt;
+    }
+
+    public String getRevokeReason() {
+        return revokeReason;
+    }
+
+    public void setRevokeReason(String revokeReason) {
+        this.revokeReason = revokeReason;
     }
 
     public Instant getExpiresAt() {
@@ -108,13 +93,5 @@ public class RefreshTokenEntity {
 
     public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
     }
 }

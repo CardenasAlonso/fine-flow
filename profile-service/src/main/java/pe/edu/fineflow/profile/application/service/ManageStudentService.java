@@ -3,6 +3,7 @@ package pe.edu.fineflow.profile.application.service;
 import java.time.Instant;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.fineflow.common.event.EventBus;
 import pe.edu.fineflow.common.event.StudentEnrolledEvent;
 import pe.edu.fineflow.common.exception.BusinessException;
@@ -27,6 +28,7 @@ public class ManageStudentService implements ManageStudentUseCase {
     }
 
     @Override
+    @Transactional
     public Mono<Student> create(Student student) {
         return TenantContext.getSchoolId()
                 .flatMap(

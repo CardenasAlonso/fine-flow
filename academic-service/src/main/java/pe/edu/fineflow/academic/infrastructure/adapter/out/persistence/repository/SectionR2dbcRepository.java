@@ -13,6 +13,9 @@ public interface SectionR2dbcRepository extends ReactiveCrudRepository<SectionEn
 
     Flux<SectionEntity> findAllBySchoolYearId(String schoolYearId);
 
+    @Query("SELECT * FROM SECTIONS WHERE school_id = :schoolId AND is_active = 1")
+    Flux<SectionEntity> findAllActiveBySchoolId(String schoolId);
+
     @Query("SELECT * FROM SECTIONS WHERE school_id = :schoolId OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
     Flux<SectionEntity> findAllBySchoolId(String schoolId, int offset, int limit);
 

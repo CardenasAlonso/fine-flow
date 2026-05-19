@@ -18,4 +18,9 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/discovery-server/target/*.jar app.jar
 EXPOSE 8761
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD wget -q --spider http://localhost:8761/actuator/health || exit 1
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

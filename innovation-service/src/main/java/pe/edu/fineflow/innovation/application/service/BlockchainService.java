@@ -36,62 +36,69 @@ public class BlockchainService implements BlockchainUseCase {
                 .flatMap(
                         e ->
                                 appendBlock(
-                                        e.getSchoolId(),
-                                        e.getTriggeredBy(),
-                                        "ATTENDANCE",
-                                        e.getAttendanceId(),
-                                        "ATTENDANCE",
-                                        "{\"studentId\":\""
-                                                + e.getStudentId()
-                                                + "\",\"status\":\""
-                                                + e.getStatus()
-                                                + "\"}"))
+                                                e.getSchoolId(),
+                                                e.getTriggeredBy(),
+                                                "ATTENDANCE",
+                                                e.getAttendanceId(),
+                                                "ATTENDANCE",
+                                                "{\"studentId\":\""
+                                                        + e.getStudentId()
+                                                        + "\",\"status\":\""
+                                                        + e.getStatus()
+                                                        + "\"}")
+                                        .doOnError(
+                                                err ->
+                                                        log.error(
+                                                                "Failed to append attendance block", err)))
+                .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofMillis(100)))
                 .subscribe(
                         block -> {},
-                        error ->
-                                log.error(
-                                        "Blockchain attendance event failed: {}",
-                                        error.getMessage()));
+                        error -> log.error("Stream error in attendance blockchain events", error));
 
         eventBus.stream(ScoreRegisteredEvent.class)
                 .flatMap(
                         e ->
                                 appendBlock(
-                                        e.getSchoolId(),
-                                        e.getTriggeredBy(),
-                                        "SCORE",
-                                        e.getScoreId(),
-                                        "STUDENT_SCORE",
-                                        "{\"studentId\":\""
-                                                + e.getStudentId()
-                                                + "\",\"score\":"
-                                                + e.getScore()
-                                                + "}"))
+                                                e.getSchoolId(),
+                                                e.getTriggeredBy(),
+                                                "SCORE",
+                                                e.getScoreId(),
+                                                "STUDENT_SCORE",
+                                                "{\"studentId\":\""
+                                                        + e.getStudentId()
+                                                        + "\",\"score\":"
+                                                        + e.getScore()
+                                                        + "}")
+                                        .doOnError(
+                                                err ->
+                                                        log.error(
+                                                                "Failed to append score block", err)))
+                .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofMillis(100)))
                 .subscribe(
-                        block -> {},
-                        error ->
-                                log.error("Blockchain score event failed: {}", error.getMessage()));
+                        block -> {}, error -> log.error("Stream error in score blockchain events", error));
 
         eventBus.stream(StudentEnrolledEvent.class)
                 .flatMap(
                         e ->
                                 appendBlock(
-                                        e.getSchoolId(),
-                                        e.getTriggeredBy(),
-                                        "ENROLLMENT",
-                                        e.getStudentId(),
-                                        "STUDENT",
-                                        "{\"studentId\":\""
-                                                + e.getStudentId()
-                                                + "\",\"sectionId\":\""
-                                                + e.getSectionId()
-                                                + "\"}"))
+                                                e.getSchoolId(),
+                                                e.getTriggeredBy(),
+                                                "ENROLLMENT",
+                                                e.getStudentId(),
+                                                "STUDENT",
+                                                "{\"studentId\":\""
+                                                        + e.getStudentId()
+                                                        + "\",\"sectionId\":\""
+                                                        + e.getSectionId()
+                                                        + "\"}")
+                                        .doOnError(
+                                                err ->
+                                                        log.error(
+                                                                "Failed to append enrollment block", err)))
+                .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofMillis(100)))
                 .subscribe(
                         block -> {},
-                        error ->
-                                log.error(
-                                        "Blockchain enrollment event failed: {}",
-                                        error.getMessage()));
+                        error -> log.error("Stream error in enrollment blockchain events", error));
     }
 
     @Override
@@ -108,15 +115,6 @@ public class BlockchainService implements BlockchainUseCase {
                         prev -> {
                             int nextIndex = prev.getBlockIndex() + 1;
                             String previousHash = prev.getHash();
-                            String data =
-                                    nextIndex
-                                            + schoolId
-                                            + eventType
-                                            + entityId
-                                            + (entityType != null ? entityType : "")
-                                            + payloadJson
-                                            + previousHash;
-                            String hash = sha256(data);
 
                             BlockchainBlock block = new BlockchainBlock();
                             block.setId(UuidGenerator.generate());
@@ -127,7 +125,7 @@ public class BlockchainService implements BlockchainUseCase {
                             block.setEntityType(entityType);
                             block.setPayload(payloadJson);
                             block.setPreviousHash(previousHash);
-                            block.setHash(hash);
+                            block.setHash(computeHash(block, previousHash));
                             block.setCreatedBy(triggeredBy);
                             block.setCreatedAt(Instant.now());
                             return repo.save(block);
@@ -144,21 +142,7 @@ public class BlockchainService implements BlockchainUseCase {
                                 BlockchainBlock curr = blocks.get(i);
                                 BlockchainBlock prev = blocks.get(i - 1);
                                 if (!curr.getPreviousHash().equals(prev.getHash())) return false;
-                                String expectedHash =
-                                        sha256(
-                                                curr.getBlockIndex()
-                                                        + schoolId
-                                                        + curr.getEventType()
-                                                        + (curr.getEntityId() != null
-                                                                ? curr.getEntityId()
-                                                                : "")
-                                                        + (curr.getEntityType() != null
-                                                                ? curr.getEntityType()
-                                                                : "")
-                                                        + (curr.getPayload() != null
-                                                                ? curr.getPayload()
-                                                                : "")
-                                                        + curr.getPreviousHash());
+                                String expectedHash = computeHash(curr, curr.getPreviousHash());
                                 if (!curr.getHash().equals(expectedHash)) return false;
                             }
                             return true;
@@ -168,6 +152,20 @@ public class BlockchainService implements BlockchainUseCase {
     @Override
     public Flux<BlockchainBlock> getChain(String schoolId) {
         return repo.findAllBySchoolId(schoolId);
+    }
+
+    private String computeHash(BlockchainBlock block, String previousHash) {
+        String entityId = block.getEntityId() != null ? block.getEntityId() : "";
+        String entityType = block.getEntityType() != null ? block.getEntityType() : "";
+        String payload = block.getPayload() != null ? block.getPayload() : "";
+        String data = block.getBlockIndex()
+                + block.getSchoolId()
+                + block.getEventType()
+                + entityId
+                + entityType
+                + payload
+                + previousHash;
+        return sha256(data);
     }
 
     private BlockchainBlock genesisPlaceholder(String schoolId) {

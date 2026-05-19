@@ -32,7 +32,7 @@ public class SectionRepositoryAdapter implements SectionRepositoryPort {
 
     @Override
     public Flux<Section> findAllActiveBySchoolId(String schoolId) {
-        return repository.findAllBySchoolId(schoolId).map(mapper::toDomain).filter(s -> s.getIsActive() == 1);
+        return repository.findAllActiveBySchoolId(schoolId).map(mapper::toDomain);
     }
 
     @Override

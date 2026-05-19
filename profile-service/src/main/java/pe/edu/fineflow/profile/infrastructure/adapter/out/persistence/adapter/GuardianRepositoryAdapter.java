@@ -21,8 +21,8 @@ public class GuardianRepositoryAdapter implements GuardianRepositoryPort {
     }
 
     @Override
-    public Mono<Guardian> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<Guardian> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class GuardianRepositoryAdapter implements GuardianRepositoryPort {
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

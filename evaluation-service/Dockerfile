@@ -20,4 +20,9 @@ COPY --from=builder /app/evaluation-service/target/*.jar app.jar
 COPY Wallet_SchoolManagment /wallet
 ENV TNS_ADMIN=/wallet
 EXPOSE 8084
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD wget -q --spider http://localhost:8084/actuator/health || exit 1
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

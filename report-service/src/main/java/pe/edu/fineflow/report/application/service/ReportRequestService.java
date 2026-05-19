@@ -1,7 +1,12 @@
 package pe.edu.fineflow.report.application.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.exception.ResourceNotFoundException;
 import pe.edu.fineflow.common.tenant.TenantContext;
@@ -22,14 +27,17 @@ public class ReportRequestService implements RequestReportUseCase {
     private final ReportJobRepositoryPort repo;
     private final PdfReportGenerator pdfGen;
     private final ExcelReportGenerator excelGen;
+    private final String outputDir;
 
     public ReportRequestService(
             ReportJobRepositoryPort repo,
             PdfReportGenerator pdfGen,
-            ExcelReportGenerator excelGen) {
+            ExcelReportGenerator excelGen,
+            @Value("${fineflow.reports.output-dir:/reports}") String outputDir) {
         this.repo = repo;
         this.pdfGen = pdfGen;
         this.excelGen = excelGen;
+        this.outputDir = outputDir;
     }
 
     @Override
@@ -77,13 +85,11 @@ public class ReportRequestService implements RequestReportUseCase {
                     } else {
                         bytes = excelGen.generate(job);
                     }
-                    String path = "/reports/"
-                            + job.getSchoolId()
-                            + "/"
-                            + job.getId()
-                            + "."
-                            + job.getFormat().toLowerCase();
-                    return path;
+                    Path dir = Paths.get(outputDir, job.getSchoolId());
+                    Files.createDirectories(dir);
+                    Path file = dir.resolve(job.getId() + "." + job.getFormat().toLowerCase());
+                    Files.write(file, bytes);
+                    return file.toAbsolutePath().toString();
                 })
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(path -> repo.updateStatus(job.getId(), "COMPLETED", 100, path))
@@ -133,7 +139,20 @@ public class ReportRequestService implements RequestReportUseCase {
                                 return Mono.error(
                                         new IllegalStateException("El reporte aún no está listo."));
                             }
-                            return Mono.just(new byte[0]);
+                            if (job.getFilePath() == null || job.getFilePath().isEmpty()) {
+                                return Mono.error(
+                                        new IllegalStateException("Ruta de archivo no disponible."));
+                            }
+                            return Mono.fromCallable(
+                                    () -> {
+                                        Path file = Paths.get(job.getFilePath());
+                                        if (!Files.exists(file)) {
+                                            throw new IOException(
+                                                    "Archivo de reporte no encontrado: "
+                                                            + job.getFilePath());
+                                        }
+                                        return Files.readAllBytes(file);
+                                    });
                         });
     }
 }

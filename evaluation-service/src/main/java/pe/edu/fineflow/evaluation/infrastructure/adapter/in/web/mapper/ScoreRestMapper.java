@@ -3,10 +3,11 @@ package pe.edu.fineflow.evaluation.infrastructure.adapter.in.web.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import pe.edu.fineflow.evaluation.domain.model.StudentScore;
 import pe.edu.fineflow.evaluation.infrastructure.adapter.in.web.dto.ScoreDto;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ScoreRestMapper {
 
     @Mapping(target = "id", ignore = true)

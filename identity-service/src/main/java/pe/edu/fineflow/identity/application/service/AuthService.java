@@ -55,40 +55,41 @@ public class AuthService implements AuthUseCase {
                                             user.getEmail(),
                                             user.getRole(),
                                             null);
-                            String accessToken = jwtProvider.generateAccessToken(principal);
-                            String jti = UuidGenerator.generate();
-                            String refreshToken =
-                                    jwtProvider.generateRefreshToken(user.getId(), jti);
-                            RefreshToken rt = new RefreshToken(
-                                    jti,
-                                    user.getSchoolId(),
-                                    user.getId(),
-                                    jwtProvider.hashToken(refreshToken),
-                                    jti,
-                                    null,
-                                    null,
-                                    0,
-                                    Instant.now().plusMillis(jwtProvider.getRefreshTokenMs()),
-                                    Instant.now());
-                            return refreshTokenRepository
-                                    .save(rt)
-                                    .thenReturn(
-                                            new AuthResponse(
-                                                    accessToken,
-                                                    refreshToken,
-                                                    "Bearer",
-                                                    jwtProvider.getRefreshTokenMs() / 1000,
-                                                    new AuthResponse.UserInfo(
-                                                            user.getId(),
-                                                            user.getEmail(),
-                                                            user.getRole(),
-                                                            user.getFirstName(),
-                                                            user.getLastName())));
-                        });
-    }
+                             String accessToken = jwtProvider.generateAccessToken(principal);
+                             String jti = UuidGenerator.generate();
+                              String refreshToken =
+                                      jwtProvider.generateRefreshToken(user.getId(), jti);
+                              RefreshToken rt = new RefreshToken(
+                                      jti,
+                                      user.getSchoolId(),
+                                      Instant.now(),
+                                      user.getId(),
+                                      jwtProvider.hashToken(refreshToken),
+                                      jti,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      Instant.now().plusMillis(jwtProvider.getRefreshTokenMs()));
+                              return refreshTokenRepository
+                                      .save(rt)
+                                      .thenReturn(
+                                              new AuthResponse(
+                                                      accessToken,
+                                                      refreshToken,
+                                                      "Bearer",
+                                                      jwtProvider.getRefreshTokenMs() / 1000,
+                                                      new AuthResponse.UserInfo(
+                                                              user.getId(),
+                                                              user.getEmail(),
+                                                              user.getRole(),
+                                                              user.getFirstName(),
+                                                              user.getLastName())));
+                          });
+     }
 
-    @Override
-    public Mono<AuthResponse> register(RegisterRequest request) {
+     @Override
+     public Mono<AuthResponse> register(RegisterRequest request) {
         return userRepository
                 .existsByEmailAndSchoolId(request.getEmail(), request.getSchoolId())
                 .flatMap(
@@ -122,48 +123,48 @@ public class AuthService implements AuthUseCase {
                                             null);
                             String accessToken = jwtProvider.generateAccessToken(principal);
                             String jti = UuidGenerator.generate();
-                            String refreshToken =
-                                    jwtProvider.generateRefreshToken(user.getId(), jti);
-                            RefreshToken rt = new RefreshToken(
-                                    jti,
-                                    user.getSchoolId(),
-                                    user.getId(),
-                                    jwtProvider.hashToken(refreshToken),
-                                    jti,
-                                    null,
-                                    null,
-                                    0,
-                                    Instant.now().plusMillis(jwtProvider.getRefreshTokenMs()),
-                                    Instant.now());
-                            return refreshTokenRepository
-                                    .save(rt)
-                                    .thenReturn(
-                                            new AuthResponse(
-                                                    accessToken,
-                                                    refreshToken,
-                                                    "Bearer",
-                                                    jwtProvider.getRefreshTokenMs() / 1000,
-                                                    new AuthResponse.UserInfo(
-                                                            user.getId(),
-                                                            user.getEmail(),
-                                                            user.getRole(),
-                                                            user.getFirstName(),
-                                                            user.getLastName())));
-                        });
-    }
+                             String refreshToken =
+                                      jwtProvider.generateRefreshToken(user.getId(), jti);
+                              RefreshToken rt = new RefreshToken(
+                                      jti,
+                                      user.getSchoolId(),
+                                      Instant.now(),
+                                      user.getId(),
+                                      jwtProvider.hashToken(refreshToken),
+                                      jti,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      Instant.now().plusMillis(jwtProvider.getRefreshTokenMs()));
+                              return refreshTokenRepository
+                                      .save(rt)
+                                      .thenReturn(
+                                              new AuthResponse(
+                                                      accessToken,
+                                                      refreshToken,
+                                                      "Bearer",
+                                                      jwtProvider.getRefreshTokenMs() / 1000,
+                                                      new AuthResponse.UserInfo(
+                                                              user.getId(),
+                                                              user.getEmail(),
+                                                              user.getRole(),
+                                                              user.getFirstName(),
+                                                              user.getLastName())));
+                          });
+     }
 
-    @Override
-    public Mono<AuthResponse> refresh(RefreshTokenRequest request) {
+     @Override
+     public Mono<AuthResponse> refresh(RefreshTokenRequest request) {
         String hashedToken = jwtProvider.hashToken(request.getRefreshToken());
         return refreshTokenRepository
-                .findByTokenHashAndSchoolId(hashedToken, null)
+                .findByTokenHash(hashedToken)
                 .switchIfEmpty(Mono.error(AuthException.tokenInvalid()))
                 .flatMap(
                         storedToken -> {
-                            if (storedToken.getIsRevoked() != null
-                                    && storedToken.getIsRevoked() == 1) {
-                                return Mono.error(AuthException.tokenRevoked());
-                            }
+                             if (storedToken.getRevokedAt() != null) {
+                                 return Mono.error(AuthException.tokenRevoked());
+                             }
                             if (storedToken.getExpiresAt().isBefore(Instant.now())) {
                                 return Mono.error(AuthException.tokenExpired());
                             }
@@ -187,20 +188,21 @@ public class AuthService implements AuthUseCase {
                                                 String newRefreshToken =
                                                         jwtProvider.generateRefreshToken(
                                                                 user.getId(), newJti);
-                                                RefreshToken newRt = new RefreshToken(
-                                                        newJti,
-                                                        user.getSchoolId(),
-                                                        user.getId(),
-                                                        jwtProvider.hashToken(newRefreshToken),
-                                                        newJti,
-                                                        storedToken.getDeviceInfo(),
-                                                        storedToken.getIpAddress(),
-                                                        0,
-                                                        Instant.now()
-                                                                .plusMillis(
-                                                                        jwtProvider
-                                                                                .getRefreshTokenMs()),
-                                                        Instant.now());
+                                                  RefreshToken newRt = new RefreshToken(
+                                                          newJti,
+                                                          user.getSchoolId(),
+                                                          Instant.now(),
+                                                          user.getId(),
+                                                          jwtProvider.hashToken(newRefreshToken),
+                                                          newJti,
+                                                          storedToken.getDeviceInfo(),
+                                                          storedToken.getIpAddress(),
+                                                          null,
+                                                          null,
+                                                          Instant.now()
+                                                                  .plusMillis(
+                                                                          jwtProvider
+                                                                                  .getRefreshTokenMs()));
                                                 return refreshTokenRepository
                                                         .revokeByJtiAndSchoolId(
                                                                 storedToken.getJti(),
@@ -228,7 +230,7 @@ public class AuthService implements AuthUseCase {
     public Mono<Void> logout(RefreshTokenRequest request) {
         String hashedToken = jwtProvider.hashToken(request.getRefreshToken());
         return refreshTokenRepository
-                .findByTokenHashAndSchoolId(hashedToken, null)
+                .findByTokenHash(hashedToken)
                 .flatMap(
                         storedToken ->
                                 refreshTokenRepository.revokeByJtiAndSchoolId(

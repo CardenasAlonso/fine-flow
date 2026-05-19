@@ -1,25 +1,17 @@
 package pe.edu.fineflow.profile.infrastructure.adapter.out.persistence.entity;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("GUARDIANS")
-public class GuardianEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class GuardianEntity extends BaseTenantEntity {
     @Column("USER_ID")
     private String userId;
 
@@ -46,7 +38,4 @@ public class GuardianEntity {
 
     @Column("IS_PRIMARY_CONTACT")
     private Integer isPrimaryContact;
-
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

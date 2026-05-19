@@ -1,16 +1,13 @@
 package pe.edu.fineflow.identity.domain.model;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pe.edu.fineflow.common.model.BaseDomainEntity;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class User {
-    private String id;
-    private String schoolId;
+public class User extends BaseDomainEntity {
     private String email;
     private String passwordHash;
     private String role;
@@ -18,6 +15,5 @@ public class User {
     private String lastName;
     private String status;
     private Instant lastLoginAt;
-    private Instant createdAt;
     private Instant updatedAt;
 }

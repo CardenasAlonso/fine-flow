@@ -4,21 +4,15 @@ import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Table("NOTIFICATIONS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationEntity {
-    @Id private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class NotificationEntity extends BaseTenantEntity {
     @Column("USER_ID")
     private String userId;
 
@@ -49,7 +43,4 @@ public class NotificationEntity {
     @Column("EXPIRES_AT")
     private Instant expiresAt;
 
-    @CreatedDate
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

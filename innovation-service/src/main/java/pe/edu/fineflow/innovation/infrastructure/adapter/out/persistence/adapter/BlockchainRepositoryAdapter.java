@@ -32,7 +32,7 @@ public class BlockchainRepositoryAdapter implements BlockchainRepositoryPort {
 
     @Override
     public Flux<BlockchainBlock> findAllBySchoolId(String schoolId) {
-        return repository.findAllBySchoolIdOrderByBlockIndexDesc(schoolId).map(this::toModel);
+        return repository.findAllBySchoolIdOrderByBlockIndexAsc(schoolId).map(this::toModel);
     }
 
     private BlockchainBlockEntity toEntity(BlockchainBlock m) {
@@ -54,6 +54,7 @@ public class BlockchainRepositoryAdapter implements BlockchainRepositoryPort {
         return new BlockchainBlock(
                 e.getId(),
                 e.getSchoolId(),
+                e.getCreatedAt(),
                 e.getEventType(),
                 e.getEntityId(),
                 e.getEntityType(),
@@ -61,7 +62,6 @@ public class BlockchainRepositoryAdapter implements BlockchainRepositoryPort {
                 e.getPreviousHash(),
                 e.getHash(),
                 e.getCreatedBy(),
-                e.getBlockIndex(),
-                e.getCreatedAt());
+                e.getBlockIndex());
     }
 }

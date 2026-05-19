@@ -1,24 +1,16 @@
 package pe.edu.fineflow.innovation.infrastructure.adapter.out.persistence.entity;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Table("BLOCKCHAIN_BLOCKS")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class BlockchainBlockEntity {
-    @Id private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class BlockchainBlockEntity extends BaseTenantEntity {
     @Column("EVENT_TYPE")
     private String eventType;
 
@@ -42,8 +34,4 @@ public class BlockchainBlockEntity {
 
     @Column("BLOCK_INDEX")
     private int blockIndex;
-
-    @CreatedDate
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

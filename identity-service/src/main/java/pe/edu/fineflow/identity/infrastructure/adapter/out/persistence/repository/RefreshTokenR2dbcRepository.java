@@ -14,8 +14,10 @@ public interface RefreshTokenR2dbcRepository
 
     Mono<RefreshTokenEntity> findByTokenHashAndSchoolId(String tokenHash, String schoolId);
 
-    Flux<RefreshTokenEntity> findByUserIdAndSchoolIdAndIsRevoked(
-            String userId, String schoolId, Integer isRevoked);
+    Mono<RefreshTokenEntity> findByTokenHash(String tokenHash);
+
+    Flux<RefreshTokenEntity> findByUserIdAndSchoolIdAndRevokedAtIsNull(
+            String userId, String schoolId);
 
     Flux<RefreshTokenEntity> findByExpiresAtBefore(Instant expiresAt);
 

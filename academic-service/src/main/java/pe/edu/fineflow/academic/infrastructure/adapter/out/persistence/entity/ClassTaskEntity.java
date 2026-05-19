@@ -1,27 +1,22 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("CLASS_TASKS")
-public class ClassTaskEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class ClassTaskEntity extends BaseTenantEntity {
     @Column("COURSE_ASSIGNMENT_ID")
     private String courseAssignmentId;
 
@@ -49,6 +44,7 @@ public class ClassTaskEntity {
     @Column("IS_ACTIVE")
     private Integer isActive;
 
-    @Column("CREATED_AT")
-    private Instant createdAt;
+    @Version
+    @Column("VERSION")
+    private Long version;
 }

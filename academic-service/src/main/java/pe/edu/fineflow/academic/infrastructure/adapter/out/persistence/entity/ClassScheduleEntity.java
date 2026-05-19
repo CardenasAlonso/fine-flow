@@ -1,25 +1,19 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("CLASS_SCHEDULES")
-public class ClassScheduleEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class ClassScheduleEntity extends BaseTenantEntity {
     @Column("SCHEDULE_VERSION_ID")
     private String scheduleVersionId;
 
@@ -55,7 +49,4 @@ public class ClassScheduleEntity {
 
     @Column("CREATED_BY")
     private String createdBy;
-
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

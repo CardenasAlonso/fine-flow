@@ -1,16 +1,14 @@
 package pe.edu.fineflow.support.domain.model;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pe.edu.fineflow.common.model.BaseDomainEntity;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuditLog {
-    private String id;
-    private String schoolId;
+public class AuditLog extends BaseDomainEntity {
     private String userId;
     private String action;
     private String entityType;
@@ -22,5 +20,4 @@ public class AuditLog {
     private String result;
     private String errorDetail;
     private Long durationMs;
-    private Instant createdAt;
 }

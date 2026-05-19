@@ -3,6 +3,7 @@ package pe.edu.fineflow.academic.application.service;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.fineflow.academic.application.port.in.ManageSectionUseCase;
 import pe.edu.fineflow.academic.domain.model.Section;
 import pe.edu.fineflow.academic.domain.port.out.SectionRepositoryPort;
@@ -17,6 +18,7 @@ public class ManageSectionService implements ManageSectionUseCase {
     private final SectionRepositoryPort repository;
 
     @Override
+    @Transactional
     public Mono<Section> create(Section section) {
         return TenantContext.getSchoolId()
                 .flatMap(

@@ -23,7 +23,7 @@ eureka:
 
 fineflow:
   jwt:
-    secret: ${JWT_SECRET:dGVzdC1zZWNyZXQta2V5LWZvci1kZXYtMjU2LWJpdHM=}
+    secret: ${JWT_SECRET}
   reports:
     output-dir: ${REPORTS_DIR:/reports}
 

@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 public interface BlockchainR2dbcRepository extends R2dbcRepository<BlockchainBlockEntity, String> {
     Mono<BlockchainBlockEntity> findFirstBySchoolIdOrderByBlockIndexDesc(String schoolId);
 
-    Flux<BlockchainBlockEntity> findAllBySchoolIdOrderByBlockIndexDesc(String schoolId);
+    Flux<BlockchainBlockEntity> findAllBySchoolIdOrderByBlockIndexAsc(String schoolId);
 
     Mono<Long> countBySchoolId(String schoolId);
 }

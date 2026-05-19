@@ -1,24 +1,18 @@
 package pe.edu.fineflow.evaluation.infrastructure.adapter.out.persistence.entity;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Table("ATTENDANCES")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceEntity {
-    @Id private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
+public class AttendanceEntity extends BaseTenantEntity {
 
     @Column("STUDENT_ID")
     private String studentId;
@@ -43,8 +37,4 @@ public class AttendanceEntity {
 
     @Column("REGISTERED_BY")
     private String registeredBy;
-
-    @CreatedDate
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

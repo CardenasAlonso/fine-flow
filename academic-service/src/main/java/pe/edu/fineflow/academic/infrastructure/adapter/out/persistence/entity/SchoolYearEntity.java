@@ -1,25 +1,19 @@
 package pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("SCHOOL_YEARS")
-public class SchoolYearEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class SchoolYearEntity extends BaseTenantEntity {
     @Column("ACADEMIC_LEVEL_ID")
     private String academicLevelId;
 
@@ -34,7 +28,4 @@ public class SchoolYearEntity {
 
     @Column("IS_ACTIVE")
     private Integer isActive;
-
-    @Column("CREATED_AT")
-    private Instant createdAt;
 }

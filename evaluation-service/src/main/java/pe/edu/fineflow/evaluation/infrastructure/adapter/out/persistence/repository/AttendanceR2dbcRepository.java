@@ -25,10 +25,9 @@ public interface AttendanceR2dbcRepository extends R2dbcRepository<AttendanceEnt
     Flux<AttendanceEntity> findByAttendanceDateAndSchoolId(LocalDate date, String schoolId, int offset, int limit);
 
     @Query(
-            "SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM ATTENDANCES WHERE student_id ="
-                + " :studentId AND attendance_date = :date AND (course_assignment_id ="
-                + " :assignmentId OR (course_assignment_id IS NULL AND :assignmentId IS NULL)) AND"
-                + " school_id = :schoolId")
-    Mono<Integer> countByStudentDateAssignment(
+            "SELECT COUNT(*) FROM ATTENDANCES WHERE student_id = :studentId AND attendance_date = :date"
+                + " AND (course_assignment_id = :assignmentId OR (course_assignment_id IS NULL AND"
+                + " :assignmentId IS NULL)) AND school_id = :schoolId")
+    Mono<Long> countByStudentDateAssignment(
             String studentId, LocalDate date, String assignmentId, String schoolId);
 }
