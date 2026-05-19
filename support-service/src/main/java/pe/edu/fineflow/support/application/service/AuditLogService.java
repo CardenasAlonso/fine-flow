@@ -3,6 +3,7 @@ package pe.edu.fineflow.support.application.service;
 import java.time.Instant;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pe.edu.fineflow.common.tenant.TenantContext;
 import pe.edu.fineflow.common.util.UuidGenerator;
 import pe.edu.fineflow.support.application.port.in.ManageAuditLogUseCase;
 import pe.edu.fineflow.support.domain.model.AuditLog;
@@ -43,16 +44,19 @@ public class AuditLogService implements ManageAuditLogUseCase {
 
     @Override
     public Flux<AuditLog> findAll(Pageable pageable) {
-        return repo.findAll(pageable);
+        return TenantContext.getSchoolId()
+                .flatMapMany(schoolId -> repo.findBySchoolId(schoolId, pageable));
     }
 
     @Override
     public Flux<AuditLog> findByAction(String action, Pageable pageable) {
-        return repo.findByAction(action, pageable);
+        return TenantContext.getSchoolId()
+                .flatMapMany(schoolId -> repo.findBySchoolIdAndAction(schoolId, action, pageable));
     }
 
     @Override
     public Flux<AuditLog> findByUserId(String userId, Pageable pageable) {
-        return repo.findByUserId(userId, pageable);
+        return TenantContext.getSchoolId()
+                .flatMapMany(schoolId -> repo.findBySchoolIdAndUserId(schoolId, userId, pageable));
     }
 }

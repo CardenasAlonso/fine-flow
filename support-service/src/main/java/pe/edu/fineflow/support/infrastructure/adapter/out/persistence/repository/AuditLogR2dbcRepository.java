@@ -12,6 +12,15 @@ public interface AuditLogR2dbcRepository extends R2dbcRepository<AuditLogEntity,
 
     Flux<AuditLogEntity> findBySchoolIdAndUserId(String schoolId, String userId);
 
+    @Query("SELECT * FROM AUDIT_LOGS WHERE school_id = :schoolId OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<AuditLogEntity> findBySchoolId(String schoolId, int offset, int limit);
+
+    @Query("SELECT * FROM AUDIT_LOGS WHERE school_id = :schoolId AND action = :action OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<AuditLogEntity> findBySchoolIdAndAction(String schoolId, String action, int offset, int limit);
+
+    @Query("SELECT * FROM AUDIT_LOGS WHERE school_id = :schoolId AND user_id = :userId OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<AuditLogEntity> findBySchoolIdAndUserId(String schoolId, String userId, int offset, int limit);
+
     @Query("SELECT * FROM AUDIT_LOGS OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
     Flux<AuditLogEntity> findAll(int offset, int limit);
 

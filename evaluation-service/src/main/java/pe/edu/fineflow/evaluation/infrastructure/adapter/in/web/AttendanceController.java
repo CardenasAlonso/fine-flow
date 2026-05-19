@@ -2,6 +2,7 @@ package pe.edu.fineflow.evaluation.infrastructure.adapter.in.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +35,7 @@ public class AttendanceController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('TEACHER','ADMIN','COORDINATOR')")
     @Operation(summary = "Registrar asistencia individual")
-    public Mono<AttendanceDto.Response> record(@RequestBody AttendanceDto.Create request) {
+    public Mono<AttendanceDto.Response> record(@RequestBody @Valid AttendanceDto.Create request) {
         return useCase.recordSingle(mapper.toDomain(request)).map(this::toResponse);
     }
 
@@ -42,7 +43,7 @@ public class AttendanceController {
     @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
     @Operation(summary = "Registrar asistencia masiva de una sección")
     public Flux<AttendanceDto.Response> recordBulk(
-            @RequestBody List<AttendanceDto.Create> requests) {
+            @RequestBody @Valid List<AttendanceDto.Create> requests) {
         return useCase.recordBulk(requests.stream().map(mapper::toDomain).toList())
                 .map(this::toResponse);
     }

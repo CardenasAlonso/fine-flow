@@ -12,6 +12,12 @@ public interface AuditLogRepositoryPort {
 
     Flux<AuditLog> findBySchoolIdAndUserId(String schoolId, String userId);
 
+    Flux<AuditLog> findBySchoolId(String schoolId, Pageable pageable);
+
+    Flux<AuditLog> findBySchoolIdAndAction(String schoolId, String action, Pageable pageable);
+
+    Flux<AuditLog> findBySchoolIdAndUserId(String schoolId, String userId, Pageable pageable);
+
     Flux<AuditLog> findAll(Pageable pageable);
 
     Flux<AuditLog> findByAction(String action, Pageable pageable);

@@ -5923,6 +5923,36 @@ END;
 
 
 -- =============================================================================
+-- Tabla: FEATURE_CATALOG
+-- Descripción: Catálogo centralizado de funcionalidades del sistema. Cada fila
+--              representa un módulo/feature que puede ser asignado a un plan
+--              de suscripción. Controla la visibilidad de módulos en la UI
+--              y la habilitación de endpoints según el plan contratado.
+--              Los valores default_k12/institute/university indican si el
+--              feature se activa por defecto al crear un tenant de ese tipo.
+-- =============================================================================
+CREATE TABLE FEATURE_CATALOG (
+    feature_key         VARCHAR2(100)   NOT NULL,
+    name                VARCHAR2(200)   NOT NULL,
+    description         VARCHAR2(1000),
+    category            VARCHAR2(50)    NOT NULL,
+    default_k12         NUMBER(1)       DEFAULT 0 NOT NULL,
+    default_institute   NUMBER(1)       DEFAULT 0 NOT NULL,
+    default_university  NUMBER(1)       DEFAULT 0 NOT NULL,
+    min_plan            VARCHAR2(20)    NOT NULL,
+    is_core             NUMBER(1)       DEFAULT 0 NOT NULL,
+    sort_order          NUMBER(3)       DEFAULT 0 NOT NULL,
+    --
+    CONSTRAINT pk_feature_catalog         PRIMARY KEY (feature_key),
+    CONSTRAINT ck_fc_default_k12          CHECK (default_k12         IN (0,1)),
+    CONSTRAINT ck_fc_default_institute    CHECK (default_institute   IN (0,1)),
+    CONSTRAINT ck_fc_default_university   CHECK (default_university  IN (0,1)),
+    CONSTRAINT ck_fc_is_core              CHECK (is_core             IN (0,1)),
+    CONSTRAINT ck_fc_min_plan             CHECK (min_plan IN ('FREE','BASIC','STANDARD','PREMIUM','ENTERPRISE'))
+);
+/
+
+-- =============================================================================
 -- BLOQUE 2: CATÁLOGO MAESTRO DE FEATURE FLAGS (FEATURE_CATALOG)
 -- FIX-1: Todos los COMMENT ON en UNA sola línea (sin concatenación implícita)
 -- =============================================================================

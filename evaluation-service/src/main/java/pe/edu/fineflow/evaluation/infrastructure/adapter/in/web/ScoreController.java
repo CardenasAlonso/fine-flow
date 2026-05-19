@@ -1,6 +1,7 @@
 package pe.edu.fineflow.evaluation.infrastructure.adapter.in.web;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,14 +30,14 @@ public class ScoreController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
-    public Mono<ScoreDto.Response> register(@RequestBody ScoreDto.Create request) {
+    public Mono<ScoreDto.Response> register(@RequestBody @Valid ScoreDto.Create request) {
         return useCase.register(mapper.toDomain(request)).map(this::toResponse);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
     public Mono<ScoreDto.Response> update(
-            @PathVariable String id, @RequestBody ScoreDto.Update request) {
+            @PathVariable String id, @RequestBody @Valid ScoreDto.Update request) {
         return useCase.update(id, mapper.toDomainUpdate(request)).map(this::toResponse);
     }
 

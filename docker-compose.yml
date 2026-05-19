@@ -131,7 +131,7 @@ services:
       TNS_ADMIN: /wallet
       JWT_SECRET: ${JWT_SECRET}
       EUREKA_URL: http://discovery-server:8761/eureka/
-      FINEFLOW_CHATBOT_URL: http://chromadb:8000
+      FINEFLOW_CHATBOT_URL: http://chatbot-service:8086
     volumes:
       - oracle-wallet:/wallet
     depends_on: [discovery-server]

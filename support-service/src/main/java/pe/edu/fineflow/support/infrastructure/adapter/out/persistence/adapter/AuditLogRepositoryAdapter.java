@@ -32,6 +32,27 @@ public class AuditLogRepositoryAdapter implements AuditLogRepositoryPort {
     }
 
     @Override
+    public Flux<AuditLog> findBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findBySchoolId(schoolId, offset, limit).map(this::toModel);
+    }
+
+    @Override
+    public Flux<AuditLog> findBySchoolIdAndAction(String schoolId, String action, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findBySchoolIdAndAction(schoolId, action, offset, limit).map(this::toModel);
+    }
+
+    @Override
+    public Flux<AuditLog> findBySchoolIdAndUserId(String schoolId, String userId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findBySchoolIdAndUserId(schoolId, userId, offset, limit).map(this::toModel);
+    }
+
+    @Override
     public Flux<AuditLog> findAll(Pageable pageable) {
         int offset = (int) pageable.getOffset();
         int limit = pageable.getPageSize();

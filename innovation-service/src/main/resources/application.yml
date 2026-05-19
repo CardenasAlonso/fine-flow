@@ -21,7 +21,7 @@ fineflow:
   jwt:
     secret: ${JWT_SECRET}
   chatbot:
-    url: ${CHATBOT_URL:http://localhost:8000}
+    url: ${FINEFLOW_CHATBOT_URL:http://chatbot-service:8086}
 
 management:
   endpoints:

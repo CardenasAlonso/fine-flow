@@ -66,14 +66,30 @@ public class ManageScheduleVersionService implements ManageScheduleVersionUseCas
                                                 "Solo se pueden publicar horarios en estado DRAFT o"
                                                         + " REVIEW"));
                             }
-                            existing.setStatus("ACTIVE");
-                            existing.setPublishedAt(Instant.now());
-                            existing.setUpdatedAt(Instant.now());
-                            log.info(
-                                    "Publishing schedule version: {} school: {}",
-                                    existing.getId(),
-                                    existing.getSchoolId());
-                            return repository.save(existing);
+                            String schoolId = existing.getSchoolId();
+                            return repository
+                                    .findActiveBySchoolId(schoolId)
+                                    .collectList()
+                                    .flatMap(
+                                            activeVersions -> Flux.fromIterable(activeVersions)
+                                                    .flatMap(active -> {
+                                                        active.setStatus("ARCHIVED");
+                                                        active.setUpdatedAt(Instant.now());
+                                                        return repository.save(active);
+                                                    })
+                                                    .then(Mono.just(existing)))
+                                    .flatMap(
+                                            toPublish -> {
+                                                toPublish.setStatus("ACTIVE");
+                                                toPublish.setPublishedAt(Instant.now());
+                                                toPublish.setUpdatedAt(Instant.now());
+                                                log.info(
+                                                        "Publishing schedule version: {} school:"
+                                                                + " {}",
+                                                        toPublish.getId(),
+                                                        toPublish.getSchoolId());
+                                                return repository.save(toPublish);
+                                            });
                         });
     }
 

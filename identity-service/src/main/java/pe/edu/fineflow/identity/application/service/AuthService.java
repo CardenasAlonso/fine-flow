@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import pe.edu.fineflow.common.exception.AuthException;
 import pe.edu.fineflow.common.security.JwtProvider;
 import pe.edu.fineflow.common.security.UserPrincipal;
+import pe.edu.fineflow.common.tenant.TenantContext;
 import pe.edu.fineflow.common.util.UuidGenerator;
 import pe.edu.fineflow.identity.application.port.in.AuthUseCase;
 import pe.edu.fineflow.identity.domain.model.RefreshToken;
@@ -85,11 +86,12 @@ public class AuthService implements AuthUseCase {
                                                               user.getRole(),
                                                               user.getFirstName(),
                                                               user.getLastName())));
-                          });
+                          })
+                .contextWrite(ctx -> ctx.put(TenantContext.SCHOOL_ID_KEY, request.getSchoolId()));
      }
 
-     @Override
-     public Mono<AuthResponse> register(RegisterRequest request) {
+    @Override
+    public Mono<AuthResponse> register(RegisterRequest request) {
         return userRepository
                 .existsByEmailAndSchoolId(request.getEmail(), request.getSchoolId())
                 .flatMap(
@@ -151,7 +153,8 @@ public class AuthService implements AuthUseCase {
                                                               user.getRole(),
                                                               user.getFirstName(),
                                                               user.getLastName())));
-                          });
+                          })
+                .contextWrite(ctx -> ctx.put(TenantContext.SCHOOL_ID_KEY, request.getSchoolId()));
      }
 
      @Override
