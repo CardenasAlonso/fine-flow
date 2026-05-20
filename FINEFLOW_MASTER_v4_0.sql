@@ -23,8 +23,8 @@
 --   1 catálogo de 35 feature flags · SP de aprovisionamiento multi-tenant
 -- =============================================================================
 
-SET DEFINE OFF;
-SET FEEDBACK OFF;
+-- SET DEFINE OFF;  -- SQL*Plus only; comment out for Cloud SQL Worksheet
+-- SET FEEDBACK OFF; -- SQL*Plus only
 
 
 -- =============================================================================
