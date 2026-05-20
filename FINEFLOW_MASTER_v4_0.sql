@@ -108,12 +108,18 @@
 -- Ejecutar conectado como ADMIN (usuario maestro de Oracle Cloud)
 -- =============================================================================
 
+/* Warm-up: primera sentencia SQL del script */
+SELECT 1 AS ok FROM DUAL;
+
 -- Eliminar el usuario si ya existe (instalación limpia)
 -- PRECAUCIÓN: borra TODOS los objetos del schema anterior
+DECLARE
+    user_count INTEGER;
 BEGIN
-    EXECUTE IMMEDIATE 'DROP USER FINEFLOW_APP CASCADE';
-EXCEPTION
-    WHEN OTHERS THEN NULL;  -- Si no existía, continuar sin error
+    SELECT COUNT(*) INTO user_count FROM ALL_USERS WHERE USERNAME = 'FINEFLOW_APP';
+    IF user_count > 0 THEN
+        EXECUTE IMMEDIATE 'DROP USER FINEFLOW_APP CASCADE';
+    END IF;
 END;
 /
 
