@@ -1,17 +1,9 @@
 package pe.edu.fineflow.academic.domain.port.out;
 
 import pe.edu.fineflow.academic.domain.model.SchoolYear;
+import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-public interface SchoolYearRepositoryPort {
-    Mono<SchoolYear> save(SchoolYear year);
-
-    Mono<SchoolYear> findById(String id);
-
-    Flux<SchoolYear> findAllBySchoolId(String schoolId);
-
+public interface SchoolYearRepositoryPort extends BaseTenantRepositoryPort<SchoolYear> {
     Flux<SchoolYear> findAllByAcademicLevelId(String academicLevelId);
-
-    Mono<Void> deleteById(String id);
 }

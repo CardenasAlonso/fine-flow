@@ -21,13 +21,13 @@ public class CourseAssignmentRepositoryAdapter implements CourseAssignmentReposi
     }
 
     @Override
-    public Mono<CourseAssignment> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<CourseAssignment> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
-    public Flux<CourseAssignment> findAllBySchoolId(String schoolId) {
-        return repository.findAllBySchoolId(schoolId).map(mapper::toDomain);
+    public Flux<CourseAssignment> findAllBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CourseAssignmentRepositoryAdapter implements CourseAssignmentReposi
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

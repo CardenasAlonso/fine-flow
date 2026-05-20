@@ -1,15 +1,13 @@
 package pe.edu.fineflow.profile.application.service;
 
-import java.time.Instant;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.fineflow.common.event.EventBus;
 import pe.edu.fineflow.common.event.StudentEnrolledEvent;
 import pe.edu.fineflow.common.exception.BusinessException;
-import pe.edu.fineflow.common.exception.ResourceNotFoundException;
+import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
+import pe.edu.fineflow.common.service.BaseTenantService;
 import pe.edu.fineflow.common.tenant.TenantContext;
-import pe.edu.fineflow.common.util.UuidGenerator;
 import pe.edu.fineflow.profile.application.port.in.ManageStudentUseCase;
 import pe.edu.fineflow.profile.domain.model.Student;
 import pe.edu.fineflow.profile.domain.port.out.StudentRepositoryPort;
@@ -17,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ManageStudentService implements ManageStudentUseCase {
+public class ManageStudentService extends BaseTenantService<Student> implements ManageStudentUseCase {
 
     private final StudentRepositoryPort repo;
     private final EventBus eventBus;
@@ -25,6 +23,19 @@ public class ManageStudentService implements ManageStudentUseCase {
     public ManageStudentService(StudentRepositoryPort repo, EventBus eventBus) {
         this.repo = repo;
         this.eventBus = eventBus;
+    }
+
+    @Override
+    protected BaseTenantRepositoryPort<Student> getRepository() { return repo; }
+
+    @Override
+    protected String entityName() { return "Student"; }
+
+    @Override
+    protected void applyUpdate(Student existing, Student updated) {
+        existing.setFirstName(updated.getFirstName());
+        existing.setLastName(updated.getLastName());
+        existing.setSectionId(updated.getSectionId());
     }
 
     @Override
@@ -43,11 +54,8 @@ public class ManageStudentService implements ManageStudentUseCase {
                                                                         "STUDENT_DUPLICATE",
                                                                         "Ya existe un alumno con"
                                                                                 + " ese DNI."));
-                                                    student.setId(UuidGenerator.generate());
-                                                    student.setSchoolId(schoolId);
                                                     student.setStatus("ACTIVE");
-                                                    student.setCreatedAt(Instant.now());
-                                                    return repo.save(student);
+                                                    return super.create(student);
                                                 })
                                         .doOnSuccess(
                                                 s -> {
@@ -62,50 +70,9 @@ public class ManageStudentService implements ManageStudentUseCase {
     }
 
     @Override
-    public Mono<Student> update(String id, Student updated) {
+    public Flux<Student> findAllBySection(String sectionId) {
         return TenantContext.getSchoolId()
-                .flatMap(
-                        schoolId ->
-                                repo.findByIdAndSchoolId(id, schoolId)
-                                        .switchIfEmpty(
-                                                Mono.error(
-                                                        new ResourceNotFoundException(
-                                                                "Student", id)))
-                                        .flatMap(
-                                                e -> {
-                                                    e.setFirstName(updated.getFirstName());
-                                                    e.setLastName(updated.getLastName());
-                                                    e.setSectionId(updated.getSectionId());
-                                                    return repo.save(e);
-                                                }));
-    }
-
-    @Override
-    public Mono<Void> delete(String id) {
-        return TenantContext.getSchoolId().flatMap(sid -> repo.deleteByIdAndSchoolId(id, sid));
-    }
-
-    @Override
-    public Mono<Student> findById(String id) {
-        return TenantContext.getSchoolId()
-                .flatMap(
-                        sid ->
-                                repo.findByIdAndSchoolId(id, sid)
-                                        .switchIfEmpty(
-                                                Mono.error(
-                                                        new ResourceNotFoundException(
-                                                                "Student", id))));
-    }
-
-    @Override
-    public Flux<Student> findAllBySection(String s) {
-        return TenantContext.getSchoolId()
-                .flatMapMany(sid -> repo.findAllBySectionIdAndSchoolId(s, sid));
-    }
-
-    @Override
-    public Flux<Student> findAll(int offset, int limit) {
-        return TenantContext.getSchoolId().flatMapMany(sid -> repo.findAllBySchoolId(sid, offset, limit));
+                .flatMapMany(sid -> repo.findAllBySectionIdAndSchoolId(sectionId, sid));
     }
 
     @Override

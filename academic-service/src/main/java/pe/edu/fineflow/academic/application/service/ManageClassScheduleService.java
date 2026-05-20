@@ -7,6 +7,9 @@ import pe.edu.fineflow.academic.application.port.in.ManageClassScheduleUseCase;
 import pe.edu.fineflow.academic.domain.model.ClassSchedule;
 import pe.edu.fineflow.academic.domain.port.out.ClassScheduleRepositoryPort;
 import pe.edu.fineflow.academic.domain.port.out.TimeSlotRepositoryPort;
+import pe.edu.fineflow.common.exception.ResourceNotFoundException;
+import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
+import pe.edu.fineflow.common.service.BaseTenantService;
 import pe.edu.fineflow.common.tenant.TenantContext;
 import pe.edu.fineflow.common.util.UuidGenerator;
 import reactor.core.publisher.Flux;
@@ -14,9 +17,23 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class ManageClassScheduleService implements ManageClassScheduleUseCase {
+public class ManageClassScheduleService extends BaseTenantService<ClassSchedule> implements ManageClassScheduleUseCase {
     private final ClassScheduleRepositoryPort repository;
     private final TimeSlotRepositoryPort timeSlotRepository;
+
+    @Override
+    protected BaseTenantRepositoryPort<ClassSchedule> getRepository() {
+        return repository;
+    }
+
+    @Override
+    protected String entityName() {
+        return "ClassSchedule";
+    }
+
+    @Override
+    protected void applyUpdate(ClassSchedule existing, ClassSchedule updated) {
+    }
 
     @Override
     public Mono<ClassSchedule> create(ClassSchedule classSchedule) {
@@ -24,7 +41,7 @@ public class ManageClassScheduleService implements ManageClassScheduleUseCase {
                 .flatMap(
                         schoolId ->
                                 timeSlotRepository
-                                        .findById(classSchedule.getTimeSlotId())
+                                        .findByIdAndSchoolId(classSchedule.getTimeSlotId(), schoolId)
                                         .flatMap(
                                                 slot -> {
                                                     if ("BREAK"
@@ -51,14 +68,14 @@ public class ManageClassScheduleService implements ManageClassScheduleUseCase {
 
     @Override
     public Mono<ClassSchedule> update(String id, ClassSchedule updated) {
-        return repository
-                .findById(id)
-                .flatMap(
-                        existing ->
-                                timeSlotRepository
-                                        .findById(updated.getTimeSlotId())
-                                        .flatMap(
-                                                slot -> {
+        return TenantContext.getSchoolId()
+                .flatMap(schoolId ->
+                        getRepository().findByIdAndSchoolId(id, schoolId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(entityName(), id)))
+                                .flatMap(existing ->
+                                        timeSlotRepository
+                                                .findByIdAndSchoolId(updated.getTimeSlotId(), schoolId)
+                                                .flatMap(slot -> {
                                                     if ("BREAK"
                                                             .equalsIgnoreCase(slot.getSlotType())) {
                                                         return Mono.error(
@@ -76,22 +93,12 @@ public class ManageClassScheduleService implements ManageClassScheduleUseCase {
                                                     existing.setNotes(updated.getNotes());
                                                     return repository.save(existing);
                                                 })
-                                        .switchIfEmpty(
-                                                Mono.error(
-                                                        new IllegalArgumentException(
-                                                                "TimeSlot no encontrado: "
-                                                                        + updated
-                                                                                .getTimeSlotId()))));
-    }
-
-    @Override
-    public Mono<Void> delete(String id) {
-        return repository.deleteById(id);
-    }
-
-    @Override
-    public Mono<ClassSchedule> findById(String id) {
-        return repository.findById(id);
+                                                .switchIfEmpty(
+                                                        Mono.error(
+                                                                new IllegalArgumentException(
+                                                                        "TimeSlot no encontrado: "
+                                                                                + updated
+                                                                                        .getTimeSlotId())))));
     }
 
     @Override

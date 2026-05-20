@@ -21,8 +21,11 @@ public class SchoolYearController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
-    public Flux<SchoolYearDto.Response> findAll() {
-        return useCase.findAll().map(this::toResponse);
+    public Flux<SchoolYearDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
     }
 
     @GetMapping("/{id}")

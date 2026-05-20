@@ -1,62 +1,39 @@
 package pe.edu.fineflow.academic.application.service;
 
-import java.time.Instant;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageAcademicPeriodUseCase;
 import pe.edu.fineflow.academic.domain.model.AcademicPeriod;
 import pe.edu.fineflow.academic.domain.port.out.AcademicPeriodRepositoryPort;
-import pe.edu.fineflow.common.tenant.TenantContext;
-import pe.edu.fineflow.common.util.UuidGenerator;
+import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
+import pe.edu.fineflow.common.service.BaseTenantService;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
-public class ManageAcademicPeriodService implements ManageAcademicPeriodUseCase {
+public class ManageAcademicPeriodService extends BaseTenantService<AcademicPeriod> implements ManageAcademicPeriodUseCase {
     private final AcademicPeriodRepositoryPort repository;
 
-    @Override
-    public Mono<AcademicPeriod> create(AcademicPeriod period) {
-        return TenantContext.getSchoolId()
-                .flatMap(
-                        schoolId -> {
-                            period.setId(UuidGenerator.generate());
-                            period.setSchoolId(schoolId);
-                            period.setIsActive(0);
-                            period.setCreatedAt(Instant.now());
-                            return repository.save(period);
-                        });
+    public ManageAcademicPeriodService(AcademicPeriodRepositoryPort repository) {
+        this.repository = repository;
     }
 
     @Override
-    public Mono<AcademicPeriod> update(String id, AcademicPeriod updated) {
-        return repository
-                .findById(id)
-                .flatMap(
-                        existing -> {
-                            existing.setName(updated.getName());
-                            existing.setPeriodType(updated.getPeriodType());
-                            existing.setStartDate(updated.getStartDate());
-                            existing.setEndDate(updated.getEndDate());
-                            existing.setIsActive(updated.getIsActive());
-                            return repository.save(existing);
-                        });
+    protected BaseTenantRepositoryPort<AcademicPeriod> getRepository() { return repository; }
+
+    @Override
+    protected String entityName() { return "AcademicPeriod"; }
+
+    @Override
+    protected void applyUpdate(AcademicPeriod existing, AcademicPeriod updated) {
+        existing.setName(updated.getName());
+        existing.setPeriodType(updated.getPeriodType());
+        existing.setStartDate(updated.getStartDate());
+        existing.setEndDate(updated.getEndDate());
+        existing.setIsActive(updated.getIsActive());
     }
 
     @Override
-    public Mono<Void> delete(String id) {
-        return repository.deleteById(id);
-    }
-
-    @Override
-    public Mono<AcademicPeriod> findById(String id) {
-        return repository.findById(id);
-    }
-
-    @Override
-    public Flux<AcademicPeriod> findAll() {
-        return TenantContext.getSchoolId().flatMapMany(repository::findAllBySchoolId);
+    public Flux<AcademicPeriod> findAll(int offset, int limit) {
+        return super.findAll(offset, limit);
     }
 
     @Override

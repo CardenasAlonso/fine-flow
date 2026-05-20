@@ -58,3 +58,6 @@
 
 # CI/CD
 **/.github/
+
+# Oracle Wallet (contains private keys and certificates)
+Wallet_SchoolManagment/

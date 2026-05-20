@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.edu.fineflow.academic.application.port.in.ManageCourseAssignmentUseCase;
@@ -29,8 +30,11 @@ public class CourseAssignmentController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
-    public Flux<CourseAssignmentDto.Response> findAll() {
-        return useCase.findAll().map(this::toResponse);
+    public Flux<CourseAssignmentDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
     }
 
     @GetMapping("/{id}")

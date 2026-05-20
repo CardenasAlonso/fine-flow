@@ -12,7 +12,7 @@ COPY evaluation-service ./evaluation-service
 COPY support-service ./support-service
 COPY innovation-service ./innovation-service
 COPY report-service ./report-service
-RUN mvn install -DskipTests -q
+RUN mvn package -pl report-service -am -DskipTests -q
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app

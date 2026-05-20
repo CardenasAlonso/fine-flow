@@ -13,7 +13,7 @@ public interface ManageCourseCompetencyUseCase {
 
     Mono<CourseCompetency> findById(String id);
 
-    Flux<CourseCompetency> findAll();
+    Flux<CourseCompetency> findAll(int offset, int limit);
 
     Flux<CourseCompetency> findByCourse(String courseId);
 }

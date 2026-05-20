@@ -21,8 +21,8 @@ public class ClassScheduleRepositoryAdapter implements ClassScheduleRepositoryPo
     }
 
     @Override
-    public Mono<ClassSchedule> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<ClassSchedule> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
@@ -41,7 +41,15 @@ public class ClassScheduleRepositoryAdapter implements ClassScheduleRepositoryPo
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Flux<ClassSchedule> findAllBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolId(schoolId)
+                .skip(offset)
+                .take(limit)
+                .map(mapper::toDomain);
+    }
+
+    @Override
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

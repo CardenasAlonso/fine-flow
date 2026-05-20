@@ -21,8 +21,8 @@ public class SectionRepositoryAdapter implements SectionRepositoryPort {
     }
 
     @Override
-    public Mono<Section> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<Section> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SectionRepositoryAdapter implements SectionRepositoryPort {
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

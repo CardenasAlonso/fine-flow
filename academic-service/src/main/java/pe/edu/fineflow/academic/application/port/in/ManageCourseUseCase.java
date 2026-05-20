@@ -13,5 +13,5 @@ public interface ManageCourseUseCase {
 
     Mono<Course> findById(String id);
 
-    Flux<Course> findAll();
+    Flux<Course> findAll(int offset, int limit);
 }

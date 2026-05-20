@@ -1,20 +1,19 @@
 package pe.edu.fineflow.academic.domain.model;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import pe.edu.fineflow.common.model.BaseDomainEntity;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Section {
-    private String id;
-    private String schoolId;
+public class Section extends BaseDomainEntity {
     private String schoolYearId;
     private String name;
     private Integer maxCapacity;
     private String tutorId;
     private Integer isActive;
-    private Instant createdAt;
 }

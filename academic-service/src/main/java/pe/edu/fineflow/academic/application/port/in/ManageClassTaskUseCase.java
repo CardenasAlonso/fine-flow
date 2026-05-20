@@ -13,7 +13,7 @@ public interface ManageClassTaskUseCase {
 
     Mono<ClassTask> findById(String id);
 
-    Flux<ClassTask> findAll();
+    Flux<ClassTask> findAll(int offset, int limit);
 
     Flux<ClassTask> findByCourseAssignment(String courseAssignmentId);
 }

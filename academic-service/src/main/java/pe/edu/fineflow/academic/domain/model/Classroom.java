@@ -1,16 +1,16 @@
 package pe.edu.fineflow.academic.domain.model;
 
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import pe.edu.fineflow.common.model.BaseDomainEntity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Classroom {
-    private String id;
-    private String schoolId;
+public class Classroom extends BaseDomainEntity {
     private String name;
     private String roomType;
     private Integer capacity;
@@ -20,5 +20,4 @@ public class Classroom {
     private Integer hasComputers;
     private Integer isActive;
     private String notes;
-    private Instant createdAt;
 }

@@ -39,10 +39,7 @@ public class VpdR2dbcConfig {
                                     .flatMap(r -> Mono.from(r.getRowsUpdated()))
                                     .then()
                                     .doOnSuccess(v -> log.debug("VPD context set for school={}", schoolId))
-                                    .onErrorResume(e -> {
-                                        log.warn("SP_SET_TENANT_CONTEXT failed: {}", e.getMessage());
-                                        return Mono.empty();
-                                    })
+                                    .doOnError(e -> log.warn("SP_SET_TENANT_CONTEXT failed: {}", e.getMessage()))
                                     .thenReturn(conn))
                             .switchIfEmpty(Mono.just(conn)));
         }

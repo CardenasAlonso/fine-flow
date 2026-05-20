@@ -21,8 +21,11 @@ public class CourseController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
-    public Flux<CourseDto.Response> findAll() {
-        return useCase.findAll().map(this::toResponse);
+    public Flux<CourseDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
     }
 
     @GetMapping("/{id}")

@@ -21,17 +21,17 @@ public class CourseRepositoryAdapter implements CourseRepositoryPort {
     }
 
     @Override
-    public Mono<Course> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<Course> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
-    public Flux<Course> findAllBySchoolId(String schoolId) {
-        return repository.findAllBySchoolId(schoolId).map(mapper::toDomain);
+    public Flux<Course> findAllBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

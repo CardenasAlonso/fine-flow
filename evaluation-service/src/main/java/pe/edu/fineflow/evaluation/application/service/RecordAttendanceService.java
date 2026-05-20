@@ -88,7 +88,7 @@ public class RecordAttendanceService implements RecordAttendanceUseCase {
                                                                             return Mono.error(
                                                                                     BusinessException.conflict(
                                                                                             "ATTENDANCE_DUPLICATE",
-                                                                                            "Ya existe un registro para este alumno en esta fecha."));
+                                                                                            "Ya existe un registro para el alumno " + attendance.getStudentId() + " en esta fecha."));
                                                                         attendance.setId(
                                                                                 UuidGenerator.generate());
                                                                         attendance.setSchoolId(

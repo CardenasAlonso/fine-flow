@@ -22,8 +22,10 @@ import reactor.core.publisher.Mono;
 public class TenantWebFilter implements WebFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final List<String> PUBLIC_PATHS =
-            List.of("/actuator", "/v3/api-docs", "/swagger-ui", "/webjars", "/api/auth/");
+    private static final List<String> PUBLIC_PREFIXES =
+            List.of("/actuator", "/v3/api-docs", "/swagger-ui", "/webjars");
+    private static final List<String> PUBLIC_EXACT =
+            List.of("/api/auth/login", "/api/auth/register", "/api/auth/refresh");
     private final JwtProvider jwtProvider;
 
     @Override
@@ -66,6 +68,7 @@ public class TenantWebFilter implements WebFilter {
     }
 
     private boolean isPublicPath(String path) {
-        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+        return PUBLIC_PREFIXES.stream().anyMatch(path::startsWith)
+                || PUBLIC_EXACT.contains(path);
     }
 }

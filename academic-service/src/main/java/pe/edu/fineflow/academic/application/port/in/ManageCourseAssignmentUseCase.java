@@ -13,7 +13,7 @@ public interface ManageCourseAssignmentUseCase {
 
     Mono<CourseAssignment> findById(String id);
 
-    Flux<CourseAssignment> findAll();
+    Flux<CourseAssignment> findAll(int offset, int limit);
 
     Flux<CourseAssignment> findBySection(String sectionId);
 }

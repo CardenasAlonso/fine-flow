@@ -23,8 +23,11 @@ public class ClassroomController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
     @Operation(summary = "Listar todas las aulas")
-    public Flux<ClassroomDto> findAll() {
-        return useCase.findAll().map(this::toDto);
+    public Flux<ClassroomDto> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toDto);
     }
 
     @GetMapping("/active")

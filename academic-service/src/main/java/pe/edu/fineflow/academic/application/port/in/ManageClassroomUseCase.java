@@ -13,7 +13,7 @@ public interface ManageClassroomUseCase {
 
     Mono<Classroom> findById(String id);
 
-    Flux<Classroom> findAll();
+    Flux<Classroom> findAll(int offset, int limit);
 
     Flux<Classroom> findAllActive();
 }

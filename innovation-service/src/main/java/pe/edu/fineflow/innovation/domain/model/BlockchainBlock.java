@@ -8,7 +8,8 @@ import pe.edu.fineflow.common.model.BaseDomainEntity;
 @Data
 @NoArgsConstructor
 public class BlockchainBlock extends BaseDomainEntity {
-    public BlockchainBlock(String id, String schoolId, Instant createdAt, String eventType, String entityId, String entityType, String payload, String previousHash, String hash, String createdBy, int blockIndex) {
+    public BlockchainBlock(String id, String schoolId, Instant createdAt, String eventType, String entityId,
+            String entityType, String payload, String previousHash, String hash, String createdBy, int blockIndex) {
         this.id = id;
         this.schoolId = schoolId;
         this.createdAt = createdAt;
@@ -21,6 +22,7 @@ public class BlockchainBlock extends BaseDomainEntity {
         this.createdBy = createdBy;
         this.blockIndex = blockIndex;
     }
+
     private String eventType;
     private String entityId;
     private String entityType;

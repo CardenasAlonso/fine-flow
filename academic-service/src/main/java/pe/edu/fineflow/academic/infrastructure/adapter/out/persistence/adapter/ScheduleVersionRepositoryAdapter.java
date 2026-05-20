@@ -21,8 +21,8 @@ public class ScheduleVersionRepositoryAdapter implements ScheduleVersionReposito
     }
 
     @Override
-    public Mono<ScheduleVersion> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<ScheduleVersion> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
@@ -31,12 +31,20 @@ public class ScheduleVersionRepositoryAdapter implements ScheduleVersionReposito
     }
 
     @Override
+    public Flux<ScheduleVersion> findAllBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolId(schoolId)
+                .skip(offset)
+                .take(limit)
+                .map(mapper::toDomain);
+    }
+
+    @Override
     public Flux<ScheduleVersion> findActiveBySchoolId(String schoolId) {
         return repository.findAllBySchoolIdAndStatus(schoolId, "ACTIVE").map(mapper::toDomain);
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

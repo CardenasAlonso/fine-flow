@@ -21,13 +21,13 @@ public class AcademicPeriodRepositoryAdapter implements AcademicPeriodRepository
     }
 
     @Override
-    public Mono<AcademicPeriod> findById(String id) {
-        return repository.findById(id).map(mapper::toDomain);
+    public Mono<AcademicPeriod> findByIdAndSchoolId(String id, String schoolId) {
+        return repository.findByIdAndSchoolId(id, schoolId).map(mapper::toDomain);
     }
 
     @Override
-    public Flux<AcademicPeriod> findAllBySchoolId(String schoolId) {
-        return repository.findAllBySchoolId(schoolId).map(mapper::toDomain);
+    public Flux<AcademicPeriod> findAllBySchoolId(String schoolId, int offset, int limit) {
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(mapper::toDomain);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class AcademicPeriodRepositoryAdapter implements AcademicPeriodRepository
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+    public Mono<Void> deleteByIdAndSchoolId(String id, String schoolId) {
+        return repository.deleteByIdAndSchoolId(id, schoolId);
     }
 }

@@ -13,7 +13,7 @@ public interface ManageSchoolYearUseCase {
 
     Mono<SchoolYear> findById(String id);
 
-    Flux<SchoolYear> findAll();
+    Flux<SchoolYear> findAll(int offset, int limit);
 
     Flux<SchoolYear> findByAcademicLevel(String academicLevelId);
 }

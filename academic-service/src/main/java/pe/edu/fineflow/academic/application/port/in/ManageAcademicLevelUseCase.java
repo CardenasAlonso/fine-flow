@@ -13,5 +13,5 @@ public interface ManageAcademicLevelUseCase {
 
     Mono<AcademicLevel> findById(String id);
 
-    Flux<AcademicLevel> findAll();
+    Flux<AcademicLevel> findAll(int offset, int limit);
 }
