@@ -42,9 +42,7 @@ public class ClassScheduleRepositoryAdapter implements ClassScheduleRepositoryPo
 
     @Override
     public Flux<ClassSchedule> findAllBySchoolId(String schoolId, int offset, int limit) {
-        return repository.findAllBySchoolId(schoolId)
-                .skip(offset)
-                .take(limit)
+        return repository.findAllBySchoolId(schoolId, offset, limit)
                 .map(mapper::toDomain);
     }
 

@@ -21,6 +21,9 @@ public interface ScheduleVersionR2dbcRepository
     @Query("SELECT * FROM SCHEDULE_VERSIONS WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<ScheduleVersionEntity> findByIdAndSchoolId(@Param("id") String id, @Param("schoolId") String schoolId);
 
+    @Query("SELECT * FROM SCHEDULE_VERSIONS WHERE school_id = :schoolId ORDER BY created_at DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<ScheduleVersionEntity> findAllBySchoolId(@Param("schoolId") String schoolId, @Param("offset") int offset, @Param("limit") int limit);
+
     @Query("DELETE FROM SCHEDULE_VERSIONS WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<Void> deleteByIdAndSchoolId(@Param("id") String id, @Param("schoolId") String schoolId);
 }

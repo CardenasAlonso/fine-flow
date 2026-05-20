@@ -61,24 +61,9 @@ public class ReportRequestService implements RequestReportUseCase {
     }
 
     public void processAsync(ReportJob job) {
-        log.info(
-                "Starting async report generation: jobId={} type={}",
-                job.getId(),
-                job.getReportType());
+        log.info("Starting async report generation: jobId={} type={}", job.getId(), job.getReportType());
 
-        repo.updateStatus(job.getId(), "PROCESSING", 10, null)
-                .subscribeOn(Schedulers.boundedElastic())
-                .doOnSuccess(
-                        v -> log.debug("Status updated to PROCESSING for job: {}", job.getId()))
-                .doOnError(
-                        e -> log.error(
-                                "Failed to update status to PROCESSING for job {}: {}",
-                                job.getId(),
-                                e.getMessage()))
-                .subscribe();
-
-        Mono.fromCallable(
-                () -> {
+        Mono.fromCallable(() -> {
                     byte[] bytes;
                     if ("PDF".equals(job.getFormat())) {
                         bytes = pdfGen.generate(job);
@@ -92,24 +77,16 @@ public class ReportRequestService implements RequestReportUseCase {
                     return file.toAbsolutePath().toString();
                 })
                 .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(path -> repo.updateStatus(job.getId(), "COMPLETED", 100, path))
+                .flatMap(path -> repo.updateStatus(job.getId(), "PROCESSING", 10, null)
+                        .then(repo.updateStatus(job.getId(), "COMPLETED", 100, path)))
                 .doOnSuccess(v -> log.info("Report generated successfully: jobId={}", job.getId()))
-                .doOnError(
-                        e -> {
-                            log.error(
-                                    "Report generation failed for job {}: {}",
-                                    job.getId(),
-                                    e.getMessage());
-                            repo.updateStatus(job.getId(), "FAILED", 0, null)
-                                    .subscribeOn(Schedulers.boundedElastic())
-                                    .doOnError(
-                                            err -> log.error(
-                                                    "Failed to update status to FAILED for"
-                                                            + " job {}: {}",
-                                                    job.getId(),
-                                                    err.getMessage()))
-                                    .subscribe();
-                        })
+                .doOnError(e -> {
+                    log.error("Report generation failed for job {}: {}", job.getId(), e.getMessage());
+                    repo.updateStatus(job.getId(), "FAILED", 0, null)
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .doOnError(err -> log.error("Failed to update status to FAILED for job {}: {}", job.getId(), err.getMessage()))
+                            .subscribe();
+                })
                 .subscribe();
     }
 

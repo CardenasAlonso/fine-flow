@@ -1175,6 +1175,7 @@ CREATE INDEX idx_users_email            ON USERS            (email);
 -- STUDENTS
 CREATE INDEX idx_students_school_sec    ON STUDENTS         (school_id, section_id, status);
 CREATE INDEX idx_students_doc           ON STUDENTS         (school_id, document_number);
+CREATE INDEX idx_students_search        ON STUDENTS         (school_id, LOWER(first_name || ' ' || last_name), document_number);
 
 -- TEACHERS
 CREATE INDEX idx_teachers_school        ON TEACHERS         (school_id, status);
@@ -4390,6 +4391,7 @@ CREATE TABLE TIME_SLOTS (
     duration_min    NUMBER(3)       NOT NULL,   -- Duración en minutos (calculado)
     slot_type       VARCHAR2(20)    DEFAULT 'CLASS' NOT NULL,
     is_active       NUMBER(1)       DEFAULT 1   NOT NULL,
+    created_at      TIMESTAMP       DEFAULT SYSTIMESTAMP NOT NULL,
     --
     CONSTRAINT pk_time_slots        PRIMARY KEY (id),
     CONSTRAINT fk_ts_school         FOREIGN KEY (school_id) REFERENCES SCHOOLS(id),

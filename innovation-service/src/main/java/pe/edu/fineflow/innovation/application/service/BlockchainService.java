@@ -52,10 +52,8 @@ public class BlockchainService implements BlockchainUseCase {
                                         err -> log.error(
                                                 "Failed to append attendance block", err)))
                 .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofMillis(100)))
-                .subscribe(
-                        block -> {
-                        },
-                        error -> log.error("Stream error in attendance blockchain events", error));
+                .onErrorContinue((err, obj) -> log.error("Stream terminated after retries, resubscribing", err))
+                .subscribe(block -> {});
 
         eventBus.stream(ScoreRegisteredEvent.class)
                 .flatMap(
@@ -74,9 +72,8 @@ public class BlockchainService implements BlockchainUseCase {
                                         err -> log.error(
                                                 "Failed to append score block", err)))
                 .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofMillis(100)))
-                .subscribe(
-                        block -> {
-                        }, error -> log.error("Stream error in score blockchain events", error));
+                .onErrorContinue((err, obj) -> log.error("Stream terminated after retries, resubscribing", err))
+                .subscribe(block -> {});
 
         eventBus.stream(StudentEnrolledEvent.class)
                 .flatMap(
@@ -95,10 +92,8 @@ public class BlockchainService implements BlockchainUseCase {
                                         err -> log.error(
                                                 "Failed to append enrollment block", err)))
                 .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofMillis(100)))
-                .subscribe(
-                        block -> {
-                        },
-                        error -> log.error("Stream error in enrollment blockchain events", error));
+                .onErrorContinue((err, obj) -> log.error("Stream terminated after retries, resubscribing", err))
+                .subscribe(block -> {});
     }
 
     @Override

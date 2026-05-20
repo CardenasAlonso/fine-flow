@@ -131,7 +131,7 @@ services:
       TNS_ADMIN: /wallet
       JWT_SECRET: ${JWT_SECRET}
       EUREKA_URL: http://discovery-server:8761/eureka/
-      FINEFLOW_CHATBOT_URL: http://chatbot-service:8086
+      FINEFLOW_CHATBOT_URL: http://chatbot-service:8087
     volumes:
       - oracle-wallet:/wallet
     depends_on: [discovery-server]
@@ -172,5 +172,5 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./Wallet_SchoolManagment
+      device: ${PWD}/Wallet_SchoolManagment
   reports-data:

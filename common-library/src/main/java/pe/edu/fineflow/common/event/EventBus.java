@@ -10,12 +10,16 @@ import reactor.core.publisher.Sinks;
 @Component
 public class EventBus {
     private static final Logger log = LoggerFactory.getLogger(EventBus.class);
-    private final Sinks.Many<DomainEvent> sink = Sinks.many().multicast().onBackpressureBuffer(500, false);
+    private final Sinks.Many<DomainEvent> sink = Sinks.many().multicast().onBackpressureBuffer(5000, false);
     private final Flux<DomainEvent> flux = sink.asFlux().publish().autoConnect();
 
     public void publish(DomainEvent event) {
-        log.debug("EventBus type={} school={}", event.getEventType(), event.getSchoolId());
-        sink.tryEmitNext(event);
+        Sinks.EmitResult result = sink.tryEmitNext(event);
+        if (result.isFailure()) {
+            log.error("EventBus drop: type={} school={} reason={}", event.getEventType(), event.getSchoolId(), result);
+        } else {
+            log.debug("EventBus type={} school={}", event.getEventType(), event.getSchoolId());
+        }
     }
 
     @SuppressWarnings("unchecked")

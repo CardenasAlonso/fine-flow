@@ -27,6 +27,9 @@ public interface ClassScheduleR2dbcRepository
     @Query("SELECT * FROM CLASS_SCHEDULES WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<ClassScheduleEntity> findByIdAndSchoolId(@Param("id") String id, @Param("schoolId") String schoolId);
 
+    @Query("SELECT * FROM CLASS_SCHEDULES WHERE school_id = :schoolId ORDER BY id OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<ClassScheduleEntity> findAllBySchoolId(@Param("schoolId") String schoolId, @Param("offset") int offset, @Param("limit") int limit);
+
     @Query("DELETE FROM CLASS_SCHEDULES WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<Void> deleteByIdAndSchoolId(@Param("id") String id, @Param("schoolId") String schoolId);
 }

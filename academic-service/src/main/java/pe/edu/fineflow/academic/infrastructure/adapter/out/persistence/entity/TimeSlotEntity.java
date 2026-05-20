@@ -2,23 +2,18 @@ package pe.edu.fineflow.academic.infrastructure.adapter.out.persistence.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import pe.edu.fineflow.common.model.BaseTenantEntity;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Table("TIME_SLOTS")
-public class TimeSlotEntity {
-    @Id
-    @Column("ID")
-    private String id;
-
-    @Column("SCHOOL_ID")
-    private String schoolId;
-
+public class TimeSlotEntity extends BaseTenantEntity {
     @Column("SLOT_NUMBER")
     private Integer slotNumber;
 

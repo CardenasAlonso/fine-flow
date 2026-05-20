@@ -21,6 +21,9 @@ public interface ScheduleExceptionR2dbcRepository
     @Query("SELECT * FROM SCHEDULE_EXCEPTIONS WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<ScheduleExceptionEntity> findByIdAndSchoolId(@Param("id") String id, @Param("schoolId") String schoolId);
 
+    @Query("SELECT * FROM SCHEDULE_EXCEPTIONS WHERE school_id = :schoolId ORDER BY exception_date DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+    Flux<ScheduleExceptionEntity> findAllBySchoolId(@Param("schoolId") String schoolId, @Param("offset") int offset, @Param("limit") int limit);
+
     @Query("DELETE FROM SCHEDULE_EXCEPTIONS WHERE ID = :id AND SCHOOL_ID = :schoolId")
     Mono<Void> deleteByIdAndSchoolId(@Param("id") String id, @Param("schoolId") String schoolId);
 }

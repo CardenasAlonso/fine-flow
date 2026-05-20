@@ -3,6 +3,7 @@ package pe.edu.fineflow.evaluation.application.service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -74,6 +75,16 @@ public class RecordAttendanceService implements RecordAttendanceUseCase {
         return TenantContext.getPrincipal()
                 .flatMapMany(
                         principal -> {
+                            Map<String, List<Attendance>> grouped = list.stream()
+                                .collect(Collectors.groupingBy(a -> a.getStudentId() + "|" + a.getAttendanceDate() + "|" + a.getCourseAssignmentId()));
+                            for (Map.Entry<String, List<Attendance>> entry : grouped.entrySet()) {
+                                if (entry.getValue().size() > 1) {
+                                    Attendance a = entry.getValue().get(0);
+                                    return Mono.error(BusinessException.conflict(
+                                        "ATTENDANCE_DUPLICATE",
+                                        "Solicitud duplicada para el alumno " + a.getStudentId() + " en esta fecha."));
+                                }
+                            }
                             return Flux.fromIterable(list)
                                     .concatMap(
                                             attendance ->

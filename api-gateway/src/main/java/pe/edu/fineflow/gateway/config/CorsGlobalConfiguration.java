@@ -1,5 +1,6 @@
 package pe.edu.fineflow.gateway.config;
 
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,9 @@ public class CorsGlobalConfiguration {
     @Value("${fineflow.cors.enforce-https:false}")
     private boolean enforceHttps;
 
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
+
     @Bean
     public CorsWebFilter corsWebFilter(
             @Value("${fineflow.cors.allowed-origins:http://localhost:4200}") String allowedOrigins) {
@@ -28,12 +32,14 @@ public class CorsGlobalConfiguration {
                 throw new IllegalStateException("Wildcard CORS origin is incompatible with allowCredentials=true. " +
                         "Specify concrete origins in fineflow.cors.allowed-origins property.");
             }
-            if (!trimmed.startsWith("https://")
-                    && !trimmed.startsWith("http://localhost")
-                    && !trimmed.startsWith("http://127.0.0.1")) {
-                log.warn("Non-HTTPS CORS origin configured (allowed in dev only): {}", trimmed);
-                if (enforceHttps) {
-                    throw new IllegalStateException("HTTPS required for CORS origin: " + trimmed);
+            boolean isDevProfile = Arrays.asList(activeProfile.split(",")).contains("dev");
+            if (!trimmed.startsWith("https://")) {
+                boolean isLocalhost = trimmed.startsWith("http://localhost") || trimmed.startsWith("http://127.0.0.1");
+                if (!isLocalhost || !isDevProfile) {
+                    if (enforceHttps) {
+                        throw new IllegalStateException("HTTPS required for CORS origin: " + trimmed);
+                    }
+                    log.warn("Non-HTTPS CORS origin configured (allowed in dev only): {}", trimmed);
                 }
             }
             config.addAllowedOrigin(trimmed);
