@@ -1,0 +1,87 @@
+package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import pe.edu.fineflow.academic.application.port.in.ManageAcademicLevelUseCase;
+import pe.edu.fineflow.academic.domain.model.AcademicLevel;
+import pe.edu.fineflow.academic.infrastructure.adapter.in.web.dto.AcademicLevelDto;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequestMapping("/api/academic/levels")
+@RequiredArgsConstructor
+@Tag(name = "Niveles Académicos", description = "Gestión de niveles educativos")
+public class AcademicLevelController {
+    private final ManageAcademicLevelUseCase useCase;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
+    public Flux<AcademicLevelDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
+    public Mono<AcademicLevelDto.Response> findById(@PathVariable String id) {
+        return useCase.findById(id).map(this::toResponse);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<AcademicLevelDto.Response> create(
+            @Valid @RequestBody AcademicLevelDto.Create request) {
+        return useCase.create(toDomain(request)).map(this::toResponse);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<AcademicLevelDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody AcademicLevelDto.Update request) {
+        return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<Void> delete(@PathVariable String id) {
+        return useCase.delete(id);
+    }
+
+    private AcademicLevelDto.Response toResponse(AcademicLevel level) {
+        return new AcademicLevelDto.Response(
+                level.getId(), level.getName(), level.getOrderNum(), level.getIsActive());
+    }
+
+    private AcademicLevel toDomain(AcademicLevelDto.Create dto) {
+        AcademicLevel level = new AcademicLevel();
+        level.setName(dto.getName());
+        level.setOrderNum(dto.getOrderNum());
+        return level;
+    }
+
+    private AcademicLevel toDomainUpdate(AcademicLevelDto.Update dto) {
+        AcademicLevel level = new AcademicLevel();
+        level.setName(dto.getName());
+        level.setOrderNum(dto.getOrderNum());
+        level.setIsActive(dto.getIsActive());
+        return level;
+    }
+}

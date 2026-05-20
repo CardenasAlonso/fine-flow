@@ -1,0 +1,30 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: innovation-service
+  r2dbc:
+    url: ${ORACLE_R2DBC_URL:r2dbc:oracle://localhost:1521/FREEPDB1}
+    username: ${ORACLE_USER:FINEFLOW_APP}
+    password: ${ORACLE_PASSWORD:FineFlow_2025!}
+    options:
+      connectTimeout: 30s
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+
+fineflow:
+  jwt:
+    secret: ${JWT_SECRET}
+  chatbot:
+    url: ${FINEFLOW_CHATBOT_URL:http://chatbot-service:8086}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

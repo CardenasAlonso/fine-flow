@@ -1,0 +1,108 @@
+package pe.edu.fineflow.support.infrastructure.adapter.out.persistence.adapter;
+
+import java.time.Instant;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+import pe.edu.fineflow.support.domain.model.Notification;
+import pe.edu.fineflow.support.domain.port.out.NotificationRepositoryPort;
+import pe.edu.fineflow.support.infrastructure.adapter.out.persistence.entity.NotificationEntity;
+import pe.edu.fineflow.support.infrastructure.adapter.out.persistence.repository.NotificationR2dbcRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Component
+@RequiredArgsConstructor
+public class NotificationRepositoryAdapter implements NotificationRepositoryPort {
+
+    private final NotificationR2dbcRepository repository;
+
+    @Override
+    public Mono<Notification> save(Notification n) {
+        return repository.save(toEntity(n)).map(this::toModel);
+    }
+
+    @Override
+    public Flux<Notification> findUnreadByUserIdAndSchoolId(String userId, String schoolId) {
+        return repository.findByUserIdAndSchoolIdAndIsRead(userId, schoolId, 0).map(this::toModel);
+    }
+
+    @Override
+    public Flux<Notification> findByRoleAndSchoolId(String role, String schoolId) {
+        return repository.findByTargetRoleAndSchoolId(role, schoolId).map(this::toModel);
+    }
+
+    @Override
+    public Flux<Notification> findAllBySchoolId(String schoolId, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return repository.findAllBySchoolId(schoolId, offset, limit).map(this::toModel);
+    }
+
+    @Override
+    public Mono<Long> countUnreadByUserId(String userId, String schoolId) {
+        return repository.findByUserIdAndSchoolIdAndIsRead(userId, schoolId, 0).count();
+    }
+
+    @Override
+    public Mono<Notification> markAsRead(String id, String schoolId) {
+        return repository
+                .findById(id)
+                .filter(e -> e.getSchoolId().equals(schoolId))
+                .flatMap(
+                        e -> {
+                            e.setIsRead(1);
+                            e.setReadAt(Instant.now());
+                            return repository.save(e);
+                        })
+                .map(this::toModel);
+    }
+
+    @Override
+    public Mono<Void> markAllAsReadByUserId(String userId, String schoolId) {
+        return repository
+                .findByUserIdAndSchoolIdAndIsRead(userId, schoolId, 0)
+                .flatMap(
+                        e -> {
+                            e.setIsRead(1);
+                            e.setReadAt(Instant.now());
+                            return repository.save(e);
+                        })
+                .then();
+    }
+
+    private NotificationEntity toEntity(Notification m) {
+        NotificationEntity e = new NotificationEntity();
+        e.setId(m.getId());
+        e.setSchoolId(m.getSchoolId());
+        e.setUserId(m.getUserId());
+        e.setTargetRole(m.getTargetRole());
+        e.setNotificationType(m.getNotificationType());
+        e.setTitle(m.getTitle());
+        e.setBody(m.getBody());
+        e.setActionUrl(m.getActionUrl());
+        e.setMetadataJson(m.getMetadataJson());
+        e.setIsRead(m.getIsRead() != null && m.getIsRead() == 1 ? 1 : 0);
+        e.setReadAt(m.getReadAt());
+        e.setExpiresAt(m.getExpiresAt());
+        return e;
+    }
+
+    private Notification toModel(NotificationEntity e) {
+        Notification m = new Notification();
+        m.setId(e.getId());
+        m.setSchoolId(e.getSchoolId());
+        m.setUserId(e.getUserId());
+        m.setTargetRole(e.getTargetRole());
+        m.setNotificationType(e.getNotificationType());
+        m.setTitle(e.getTitle());
+        m.setBody(e.getBody());
+        m.setActionUrl(e.getActionUrl());
+        m.setMetadataJson(e.getMetadataJson());
+        m.setIsRead(e.getIsRead());
+        m.setReadAt(e.getReadAt());
+        m.setExpiresAt(e.getExpiresAt());
+        m.setCreatedAt(e.getCreatedAt());
+        return m;
+    }
+}

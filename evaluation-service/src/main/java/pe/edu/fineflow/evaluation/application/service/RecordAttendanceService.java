@@ -1,0 +1,138 @@
+package pe.edu.fineflow.evaluation.application.service;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pe.edu.fineflow.common.event.AttendanceRecordedEvent;
+import pe.edu.fineflow.common.event.EventBus;
+import pe.edu.fineflow.common.exception.BusinessException;
+import pe.edu.fineflow.common.tenant.TenantContext;
+import pe.edu.fineflow.common.util.UuidGenerator;
+import pe.edu.fineflow.evaluation.application.port.in.RecordAttendanceUseCase;
+import pe.edu.fineflow.evaluation.domain.model.Attendance;
+import pe.edu.fineflow.evaluation.domain.port.out.AttendanceRepositoryPort;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Service
+public class RecordAttendanceService implements RecordAttendanceUseCase {
+
+    private final AttendanceRepositoryPort repo;
+    private final EventBus eventBus;
+
+    public RecordAttendanceService(AttendanceRepositoryPort repo, EventBus eventBus) {
+        this.repo = repo;
+        this.eventBus = eventBus;
+    }
+
+    @Override
+    @Transactional
+    public Mono<Attendance> recordSingle(Attendance attendance) {
+        return TenantContext.getPrincipal()
+                .flatMap(
+                        principal ->
+                                repo.existsByStudentIdAndDateAndAssignment(
+                                                attendance.getStudentId(),
+                                                        attendance.getAttendanceDate(),
+                                                attendance.getCourseAssignmentId(),
+                                                        principal.schoolId())
+                                        .flatMap(
+                                                exists -> {
+                                                    if (exists)
+                                                        return Mono.error(
+                                                                BusinessException.conflict(
+                                                                        "ATTENDANCE_DUPLICATE",
+                                                                        "Ya existe un registro para"
+                                                                            + " este alumno en esta"
+                                                                            + " fecha."));
+                                                    attendance.setId(UuidGenerator.generate());
+                                                    attendance.setSchoolId(principal.schoolId());
+                                                    attendance.setRegisteredBy(principal.userId());
+                                                    attendance.setCreatedAt(Instant.now());
+                                                    return repo.save(attendance);
+                                                })
+                                        .doOnSuccess(
+                                                saved ->
+                                                        eventBus.publish(
+                                                                new AttendanceRecordedEvent(
+                                                                        principal.schoolId(),
+                                                                        principal.userId(),
+                                                                        saved.getId(),
+                                                                        saved.getStudentId(),
+                                                                        saved.getStatus(),
+                                                                        saved.getAttendanceDate()
+                                                                                .toString()))));
+    }
+
+    @Override
+    @Transactional
+    public Flux<Attendance> recordBulk(List<Attendance> list) {
+        return TenantContext.getPrincipal()
+                .flatMapMany(
+                        principal -> {
+                            return Flux.fromIterable(list)
+                                    .concatMap(
+                                            attendance ->
+                                                    repo.existsByStudentIdAndDateAndAssignment(
+                                                                    attendance.getStudentId(),
+                                                                    attendance.getAttendanceDate(),
+                                                                    attendance.getCourseAssignmentId(),
+                                                                    principal.schoolId())
+                                                            .flatMap(
+                                                                    exists -> {
+                                                                        if (exists)
+                                                                            return Mono.error(
+                                                                                    BusinessException.conflict(
+                                                                                            "ATTENDANCE_DUPLICATE",
+                                                                                            "Ya existe un registro para el alumno " + attendance.getStudentId() + " en esta fecha."));
+                                                                        attendance.setId(
+                                                                                UuidGenerator.generate());
+                                                                        attendance.setSchoolId(
+                                                                                principal.schoolId());
+                                                                        attendance.setRegisteredBy(
+                                                                                principal.userId());
+                                                                        attendance.setCreatedAt(
+                                                                                Instant.now());
+                                                                        return Mono.just(attendance);
+                                                                    }))
+                                    .collectList()
+                                    .flatMapMany(
+                                            enriched -> {
+                                                if (enriched.isEmpty()) return Flux.empty();
+                                                return repo.saveAll(enriched)
+                                                        .doOnNext(
+                                                                saved ->
+                                                                        eventBus.publish(
+                                                                                new AttendanceRecordedEvent(
+                                                                                        principal.schoolId(),
+                                                                                        principal.userId(),
+                                                                                        saved.getId(),
+                                                                                        saved.getStudentId(),
+                                                                                        saved.getStatus(),
+                                                                                        saved.getAttendanceDate()
+                                                                                                .toString())));
+                                            });
+                        });
+    }
+
+    @Override
+    public Mono<Attendance> recordQrEntry(String qrToken, String schoolId) {
+        return Mono.error(new UnsupportedOperationException("QR validation not implemented yet"));
+    }
+
+    @Override
+    public Flux<Attendance> findByStudent(String studentId, int offset, int limit) {
+        return TenantContext.getSchoolId()
+                .flatMapMany(sid -> repo.findByStudentIdAndSchoolId(studentId, sid, offset, limit));
+    }
+
+    @Override
+    public Flux<Attendance> findByDate(LocalDate date, int offset, int limit) {
+        return TenantContext.getSchoolId()
+                .flatMapMany(sid -> repo.findByDateAndSchoolId(date, sid, offset, limit));
+    }
+}

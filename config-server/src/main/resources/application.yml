@@ -1,0 +1,28 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        #Comentar todo lo relacionado con composite cuando se suba a producción, ya que es solo para pruebas locales
+        #git:
+        #  uri: https://github.com
+        #  username: ${CardenasAlonso}
+        #  password: ${GIT_PASSWORD}
+        #  clone-on-start: true
+        composite:
+          - type: native
+            search-locations: classpath:/config-repo,file:./config-repo
+  security:
+    user:
+      name: ${CONFIG_USER:admin}
+      password: ${CONFIG_PASSWORD:secret}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh

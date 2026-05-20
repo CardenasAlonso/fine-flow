@@ -1,0 +1,176 @@
+services:
+
+  discovery-server:
+    build:
+      context: .
+      dockerfile: ./discovery-server/Dockerfile
+    container_name: fineflow-discovery
+    ports: ["8761:8761"]
+    networks: [fineflow-net]
+
+  config-server:
+    build:
+      context: .
+      dockerfile: ./config-server/Dockerfile
+    container_name: fineflow-config
+    ports: ["8888:8888"]
+    networks: [fineflow-net]
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    container_name: fineflow-gateway
+    ports: ["8080:8080"]
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  identity-service:
+    build:
+      context: .
+      dockerfile: ./identity-service/Dockerfile
+    container_name: fineflow-identity
+    ports: ["8081:8081"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    volumes:
+      - oracle-wallet:/wallet
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  academic-service:
+    build:
+      context: .
+      dockerfile: ./academic-service/Dockerfile
+    container_name: fineflow-academic
+    ports: ["8082:8082"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    volumes:
+      - oracle-wallet:/wallet
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  profile-service:
+    build:
+      context: .
+      dockerfile: ./profile-service/Dockerfile
+    container_name: fineflow-profile
+    ports: ["8083:8083"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    volumes:
+      - oracle-wallet:/wallet
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  evaluation-service:
+    build:
+      context: .
+      dockerfile: ./evaluation-service/Dockerfile
+    container_name: fineflow-evaluation
+    ports: ["8084:8084"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    volumes:
+      - oracle-wallet:/wallet
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  support-service:
+    build:
+      context: .
+      dockerfile: ./support-service/Dockerfile
+    container_name: fineflow-support
+    ports: ["8085:8085"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    volumes:
+      - oracle-wallet:/wallet
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  innovation-service:
+    build:
+      context: .
+      dockerfile: ./innovation-service/Dockerfile
+    container_name: fineflow-innovation
+    ports: ["8086:8086"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      FINEFLOW_CHATBOT_URL: http://chatbot-service:8086
+    volumes:
+      - oracle-wallet:/wallet
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  report-service:
+    build:
+      context: .
+      dockerfile: ./report-service/Dockerfile
+    container_name: fineflow-reports
+    ports: ["8087:8087"]
+    environment:
+      ORACLE_R2DBC_URL: ${ORACLE_R2DBC_URL}
+      ORACLE_USER: ${ORACLE_USER}
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      TNS_ADMIN: /wallet
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    volumes:
+      - oracle-wallet:/wallet
+      - reports-data:/reports
+    depends_on: [discovery-server]
+    networks: [fineflow-net]
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: fineflow-chroma
+    ports: ["8000:8000"]
+    networks: [fineflow-net]
+
+networks:
+  fineflow-net:
+    driver: bridge
+
+volumes:
+  oracle-wallet:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./Wallet_SchoolManagment
+  reports-data:

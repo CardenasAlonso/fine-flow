@@ -1,0 +1,62 @@
+package pe.edu.fineflow.support.application.service;
+
+import java.time.Instant;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import pe.edu.fineflow.common.tenant.TenantContext;
+import pe.edu.fineflow.common.util.UuidGenerator;
+import pe.edu.fineflow.support.application.port.in.ManageAuditLogUseCase;
+import pe.edu.fineflow.support.domain.model.AuditLog;
+import pe.edu.fineflow.support.domain.port.out.AuditLogRepositoryPort;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Service
+public class AuditLogService implements ManageAuditLogUseCase {
+    private final AuditLogRepositoryPort repo;
+
+    public AuditLogService(AuditLogRepositoryPort repo) {
+        this.repo = repo;
+    }
+
+    public Mono<AuditLog> log(
+            String schoolId,
+            String userId,
+            String action,
+            String entityType,
+            String entityId,
+            String oldJson,
+            String newJson,
+            String result) {
+        AuditLog log = new AuditLog();
+        log.setId(UuidGenerator.generate());
+        log.setSchoolId(schoolId);
+        log.setUserId(userId);
+        log.setAction(action);
+        log.setEntityType(entityType);
+        log.setEntityId(entityId);
+        log.setOldValueJson(oldJson);
+        log.setNewValueJson(newJson);
+        log.setResult(result);
+        log.setCreatedAt(Instant.now());
+        return repo.save(log);
+    }
+
+    @Override
+    public Flux<AuditLog> findAll(Pageable pageable) {
+        return TenantContext.getSchoolId()
+                .flatMapMany(schoolId -> repo.findBySchoolId(schoolId, pageable));
+    }
+
+    @Override
+    public Flux<AuditLog> findByAction(String action, Pageable pageable) {
+        return TenantContext.getSchoolId()
+                .flatMapMany(schoolId -> repo.findBySchoolIdAndAction(schoolId, action, pageable));
+    }
+
+    @Override
+    public Flux<AuditLog> findByUserId(String userId, Pageable pageable) {
+        return TenantContext.getSchoolId()
+                .flatMapMany(schoolId -> repo.findBySchoolIdAndUserId(schoolId, userId, pageable));
+    }
+}

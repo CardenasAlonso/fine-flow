@@ -1,0 +1,149 @@
+package pe.edu.fineflow.academic.application.service;
+
+import java.time.Instant;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import pe.edu.fineflow.academic.application.port.in.ManageScheduleVersionUseCase;
+import pe.edu.fineflow.academic.domain.model.ScheduleVersion;
+import pe.edu.fineflow.academic.domain.port.out.ScheduleVersionRepositoryPort;
+import pe.edu.fineflow.common.exception.ResourceNotFoundException;
+import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
+import pe.edu.fineflow.common.service.BaseTenantService;
+import pe.edu.fineflow.common.tenant.TenantContext;
+import pe.edu.fineflow.common.util.UuidGenerator;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ManageScheduleVersionService extends BaseTenantService<ScheduleVersion> implements ManageScheduleVersionUseCase {
+    private final ScheduleVersionRepositoryPort repository;
+
+    @Override
+    protected BaseTenantRepositoryPort<ScheduleVersion> getRepository() {
+        return repository;
+    }
+
+    @Override
+    protected String entityName() {
+        return "ScheduleVersion";
+    }
+
+    @Override
+    protected void applyUpdate(ScheduleVersion existing, ScheduleVersion updated) {
+        existing.setVersionName(updated.getVersionName());
+        existing.setAcademicPeriodId(updated.getAcademicPeriodId());
+        existing.setNotes(updated.getNotes());
+        existing.setValidFrom(updated.getValidFrom());
+        existing.setValidUntil(updated.getValidUntil());
+        existing.setUpdatedAt(Instant.now());
+    }
+
+    @Override
+    public Mono<ScheduleVersion> create(ScheduleVersion scheduleVersion) {
+        return TenantContext.getSchoolId()
+                .flatMap(
+                        schoolId -> {
+                            scheduleVersion.setId(UuidGenerator.generate());
+                            scheduleVersion.setSchoolId(schoolId);
+                            scheduleVersion.setStatus("DRAFT");
+                            scheduleVersion.setCreatedAt(Instant.now());
+                            scheduleVersion.setUpdatedAt(Instant.now());
+                            return repository.save(scheduleVersion);
+                        });
+    }
+
+    @Override
+    public Mono<ScheduleVersion> update(String id, ScheduleVersion updated) {
+        return TenantContext.getSchoolId()
+                .flatMap(schoolId ->
+                        getRepository().findByIdAndSchoolId(id, schoolId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(entityName(), id)))
+                                .flatMap(existing -> {
+                                    if ("ACTIVE".equals(existing.getStatus())) {
+                                        return Mono.error(
+                                                new IllegalStateException(
+                                                        "No se puede modificar un horario activo"));
+                                    }
+                                    applyUpdate(existing, updated);
+                                    return getRepository().save(existing);
+                                }));
+    }
+
+    @Override
+    public Mono<ScheduleVersion> publish(String id) {
+        return findById(id)
+                .flatMap(
+                        existing -> {
+                            if (!"DRAFT".equals(existing.getStatus())
+                                    && !"REVIEW".equals(existing.getStatus())) {
+                                return Mono.error(
+                                        new IllegalStateException(
+                                                "Solo se pueden publicar horarios en estado DRAFT o"
+                                                        + " REVIEW"));
+                            }
+                            String schoolId = existing.getSchoolId();
+                            return repository
+                                    .findActiveBySchoolId(schoolId)
+                                    .collectList()
+                                    .flatMap(
+                                            activeVersions -> Flux.fromIterable(activeVersions)
+                                                    .flatMap(active -> {
+                                                        active.setStatus("ARCHIVED");
+                                                        active.setUpdatedAt(Instant.now());
+                                                        return repository.save(active);
+                                                    })
+                                                    .then(Mono.just(existing)))
+                                    .flatMap(
+                                            toPublish -> {
+                                                toPublish.setStatus("ACTIVE");
+                                                toPublish.setPublishedAt(Instant.now());
+                                                toPublish.setUpdatedAt(Instant.now());
+                                                log.info(
+                                                        "Publishing schedule version: {} school:"
+                                                                + " {}",
+                                                        toPublish.getId(),
+                                                        toPublish.getSchoolId());
+                                                return repository.save(toPublish);
+                                            });
+                        });
+    }
+
+    @Override
+    public Mono<ScheduleVersion> archive(String id) {
+        return findById(id)
+                .flatMap(
+                        existing -> {
+                            existing.setStatus("ARCHIVED");
+                            existing.setUpdatedAt(Instant.now());
+                            log.info("Archiving schedule version: {}", existing.getId());
+                            return repository.save(existing);
+                        });
+    }
+
+    @Override
+    public Mono<Void> delete(String id) {
+        return findById(id)
+                .flatMap(
+                        existing -> {
+                            if ("ACTIVE".equals(existing.getStatus())) {
+                                return Mono.error(
+                                        new IllegalStateException(
+                                                "No se puede eliminar un horario activo"));
+                            }
+                            return getRepository().deleteByIdAndSchoolId(id, existing.getSchoolId());
+                        });
+    }
+
+    @Override
+    public Flux<ScheduleVersion> findAll() {
+        return TenantContext.getSchoolId().flatMapMany(repository::findAllBySchoolId);
+    }
+
+    @Override
+    public Flux<ScheduleVersion> findActive() {
+        return TenantContext.getSchoolId().flatMapMany(repository::findActiveBySchoolId);
+    }
+}

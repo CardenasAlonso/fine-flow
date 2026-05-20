@@ -1,0 +1,63 @@
+# Build artifacts
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+
+# Git
+**/.git/
+**/.gitignore
+**/.gitattributes
+
+# IDE
+**/.idea/
+**/*.iml
+**/.vscode/
+
+# Node/Frontend (if exists separately)
+**/node_modules/
+**/package*.json
+**/webpack*.js
+**/.npm/
+
+# Documentation
+**/*.md
+
+# Docker
+**/Dockerfile*
+**/.dockerignore
+**/docker-compose*.yml
+**/docker-entrypoint*.sh
+
+# Environment & Config
+**/.env*
+**/secrets/
+**/credentials*
+
+# Logs
+**/*.log
+
+# Temp files
+**/*.tmp
+**/.DS_Store
+**/Thumbs.db
+
+# Scripts
+**/scripts/
+
+# Test files
+**/src/test/
+**/src/it/
+**/*Test.java
+**/*Tests.java
+**/.mvn/wrapper/
+
+# Coverage
+**/jacoco/
+**/.codecov/
+
+# CI/CD
+**/.github/
+
+# Oracle Wallet (contains private keys and certificates)
+Wallet_SchoolManagment/

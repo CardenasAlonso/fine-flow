@@ -1,0 +1,96 @@
+package pe.edu.fineflow.academic.infrastructure.adapter.in.web;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import pe.edu.fineflow.academic.application.port.in.ManageCourseCompetencyUseCase;
+import pe.edu.fineflow.academic.domain.model.CourseCompetency;
+import pe.edu.fineflow.academic.infrastructure.adapter.in.web.dto.CourseCompetencyDto;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequestMapping("/api/academic/competencies")
+@RequiredArgsConstructor
+@Tag(name = "Competencias", description = "Gestión de competencias curriculares MINEDU")
+public class CourseCompetencyController {
+    private final ManageCourseCompetencyUseCase useCase;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    public Flux<CourseCompetencyDto.Response> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        int offset = page * size;
+        return useCase.findAll(offset, size).map(this::toResponse);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    public Mono<CourseCompetencyDto.Response> findById(@PathVariable String id) {
+        return useCase.findById(id).map(this::toResponse);
+    }
+
+    @GetMapping("/course/{courseId}")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR','TEACHER')")
+    public Flux<CourseCompetencyDto.Response> findByCourse(@PathVariable String courseId) {
+        return useCase.findByCourse(courseId).map(this::toResponse);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
+    public Mono<CourseCompetencyDto.Response> create(
+            @Valid @RequestBody CourseCompetencyDto.Create request) {
+        return useCase.create(toDomain(request)).map(this::toResponse);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATOR')")
+    public Mono<CourseCompetencyDto.Response> update(
+            @PathVariable String id, @Valid @RequestBody CourseCompetencyDto.Update request) {
+        return useCase.update(id, toDomainUpdate(request)).map(this::toResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<Void> delete(@PathVariable String id) {
+        return useCase.delete(id);
+    }
+
+    private CourseCompetencyDto.Response toResponse(CourseCompetency c) {
+        return new CourseCompetencyDto.Response(
+                c.getId(), c.getName(), c.getDescription(), c.getWeight(), c.getIsActive());
+    }
+
+    private CourseCompetency toDomain(CourseCompetencyDto.Create dto) {
+        CourseCompetency c = new CourseCompetency();
+        c.setName(dto.getName());
+        c.setDescription(dto.getDescription());
+        c.setWeight(dto.getWeight());
+        c.setCourseId(dto.getCourseId());
+        return c;
+    }
+
+    private CourseCompetency toDomainUpdate(CourseCompetencyDto.Update dto) {
+        CourseCompetency c = new CourseCompetency();
+        c.setName(dto.getName());
+        c.setDescription(dto.getDescription());
+        c.setWeight(dto.getWeight());
+        c.setIsActive(dto.getIsActive());
+        return c;
+    }
+}
