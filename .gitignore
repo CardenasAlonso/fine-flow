@@ -39,3 +39,10 @@ build/
 
 # Oracle Wallet (contains private keys and certificates)
 Wallet_SchoolManagment/
+Wallet_FineFlow/
+
+# Sensitive credential files
+*.sso
+*.p12
+*.jks
+*.pem
