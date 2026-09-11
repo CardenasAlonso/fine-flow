@@ -20,7 +20,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final String BEARER = "Bearer ";
     private static final List<String> PUBLIC_PATHS =
-            List.of("/api/auth/", "/actuator/", "/v3/api-docs/", "/swagger-ui/");
+            List.of("/api/auth/", "/v3/api-docs/", "/swagger-ui/", "/webjars/");
 
     private final JwtProvider jwtProvider;
 
