@@ -9,10 +9,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.fineflow.common.security.UserPrincipal;
 import pe.edu.fineflow.identity.application.port.in.AuthUseCase;
-import pe.edu.fineflow.identity.infrastructure.adapter.in.web.dto.AuthRequest;
-import pe.edu.fineflow.identity.infrastructure.adapter.in.web.dto.AuthResponse;
-import pe.edu.fineflow.identity.infrastructure.adapter.in.web.dto.RefreshTokenRequest;
-import pe.edu.fineflow.identity.infrastructure.adapter.in.web.dto.RegisterRequest;
+import pe.edu.fineflow.identity.application.port.in.dto.AuthRequest;
+import pe.edu.fineflow.identity.application.port.in.dto.AuthResponse;
+import pe.edu.fineflow.identity.application.port.in.dto.RefreshTokenRequest;
+import pe.edu.fineflow.identity.application.port.in.dto.RegisterRequest;
 import reactor.core.publisher.Mono;
 
 @RestController

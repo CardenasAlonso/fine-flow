@@ -16,6 +16,10 @@ public enum ErrorCode {
     ACCOUNT_LOCKED(
             "AUTH_006", "Cuenta bloqueada por demasiados intentos fallidos", HttpStatus.LOCKED),
     USER_NOT_FOUND("AUTH_007", "Usuario no encontrado", HttpStatus.NOT_FOUND),
+    RATE_LIMITED(
+            "AUTH_008",
+            "Demasiados intentos. Intente nuevamente en 15 minutos",
+            HttpStatus.TOO_MANY_REQUESTS),
 
     // Tenant
     TENANT_NOT_FOUND("TENANT_001", "Institución educativa no encontrada", HttpStatus.NOT_FOUND),

@@ -41,7 +41,19 @@ public class AuthException extends BusinessException {
         return new AuthException(ErrorCode.ACCOUNT_LOCKED, detail);
     }
 
+    public static AuthException rateLimited() {
+        return new AuthException(ErrorCode.RATE_LIMITED);
+    }
+
     public static BusinessException conflict(String code, String detail) {
         return BusinessException.conflict(code, detail);
+    }
+
+    public static BusinessException forbidden(String code, String detail) {
+        return BusinessException.forbidden(code, detail);
+    }
+
+    public static BusinessException badRequest(String code, String detail) {
+        return BusinessException.badRequest(code, detail);
     }
 }
