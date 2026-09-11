@@ -42,9 +42,9 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
     }
 
     @Override
-    public Mono<Void> closeSession(String sessionId) {
+    public Mono<Void> closeSession(String sessionId, String schoolId) {
         return sessionRepository
-                .findById(sessionId)
+                .findByIdAndSchoolId(sessionId, schoolId)
                 .flatMap(
                         s -> {
                             s.setIsActive(0);

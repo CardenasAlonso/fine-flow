@@ -14,5 +14,5 @@ public interface ChatSessionRepositoryPort {
 
     Flux<ChatMessage> findMessagesBySessionId(String sessionId);
 
-    Mono<Void> closeSession(String sessionId);
+    Mono<Void> closeSession(String sessionId, String schoolId);
 }
