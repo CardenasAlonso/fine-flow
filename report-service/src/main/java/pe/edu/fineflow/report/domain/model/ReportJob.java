@@ -23,6 +23,20 @@ public class ReportJob {
     private Instant requestedAt;
     private Instant startedAt;
     private Instant completedAt;
-    private Instant expiresAt;
-    private int downloadCount;
+private Instant expiresAt;
+  private int downloadCount;
+
+  public boolean isPdf() {
+    return "PDF".equalsIgnoreCase(format);
+  }
+
+  public String contentType() {
+    return isPdf()
+        ? "application/pdf"
+        : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  }
+
+  public String fileExtension() {
+    return isPdf() ? "pdf" : format == null ? "bin" : format.toLowerCase();
+  }
 }

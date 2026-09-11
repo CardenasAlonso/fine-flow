@@ -5,11 +5,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface RequestReportUseCase {
-    Mono<ReportJob> request(String reportType, String format, String parametersJson);
+  Mono<ReportJob> request(String reportType, String format, String parametersJson);
 
-    Mono<ReportJob> getStatus(String jobId);
+  Mono<ReportJob> getStatus(String jobId);
 
-    Flux<ReportJob> myJobs();
+  Flux<ReportJob> myJobs();
 
-    Mono<byte[]> download(String jobId);
+  Mono<DownloadResult> download(String jobId);
+
+  record DownloadResult(String fileName, String contentType, byte[] content) {}
 }

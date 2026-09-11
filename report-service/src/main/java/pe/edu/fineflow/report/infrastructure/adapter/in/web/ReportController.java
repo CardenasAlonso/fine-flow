@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.fineflow.report.application.port.in.RequestReportUseCase;
+import pe.edu.fineflow.report.application.port.in.RequestReportUseCase.DownloadResult;
 import pe.edu.fineflow.report.domain.model.ReportJob;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,13 +49,9 @@ public class ReportController {
     @PreAuthorize("isAuthenticated()")
     public Mono<ResponseEntity<byte[]>> download(@PathVariable String jobId) {
         return useCase.download(jobId)
-                .map(
-                        bytes ->
-                                ResponseEntity.ok()
-                                        .header(
-                                                HttpHeaders.CONTENT_DISPOSITION,
-                                                "attachment; filename=\"report-" + jobId + ".pdf\"")
-                                        .contentType(MediaType.APPLICATION_PDF)
-                                        .body(bytes));
+                .map(result -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + result.fileName() + "\"")
+                        .contentType(MediaType.parseMediaType(result.contentType()))
+                        .body(result.content()));
     }
 }
