@@ -1,7 +1,5 @@
 package pe.edu.fineflow.academic.application.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageAcademicLevelUseCase;
 import pe.edu.fineflow.academic.domain.model.AcademicLevel;
 import pe.edu.fineflow.academic.domain.port.out.AcademicLevelRepositoryPort;
@@ -9,10 +7,12 @@ import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
 import pe.edu.fineflow.common.service.BaseTenantService;
 import reactor.core.publisher.Mono;
 
-@Service
-@RequiredArgsConstructor
 public class ManageAcademicLevelService extends BaseTenantService<AcademicLevel> implements ManageAcademicLevelUseCase {
     private final AcademicLevelRepositoryPort repository;
+
+    public ManageAcademicLevelService(AcademicLevelRepositoryPort repository) {
+        this.repository = repository;
+    }
 
     @Override
     protected BaseTenantRepositoryPort<AcademicLevel> getRepository() {

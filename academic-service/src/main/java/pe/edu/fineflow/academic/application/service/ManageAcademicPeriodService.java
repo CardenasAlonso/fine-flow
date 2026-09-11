@@ -1,6 +1,5 @@
 package pe.edu.fineflow.academic.application.service;
 
-import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageAcademicPeriodUseCase;
 import pe.edu.fineflow.academic.domain.model.AcademicPeriod;
 import pe.edu.fineflow.academic.domain.port.out.AcademicPeriodRepositoryPort;
@@ -8,7 +7,6 @@ import pe.edu.fineflow.common.port.BaseTenantRepositoryPort;
 import pe.edu.fineflow.common.service.BaseTenantService;
 import reactor.core.publisher.Flux;
 
-@Service
 public class ManageAcademicPeriodService extends BaseTenantService<AcademicPeriod> implements ManageAcademicPeriodUseCase {
     private final AcademicPeriodRepositoryPort repository;
 

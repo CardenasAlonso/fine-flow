@@ -1,7 +1,5 @@
 package pe.edu.fineflow.academic.application.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageClassroomUseCase;
 import pe.edu.fineflow.academic.domain.model.Classroom;
 import pe.edu.fineflow.academic.domain.port.out.ClassroomRepositoryPort;
@@ -11,10 +9,13 @@ import pe.edu.fineflow.common.tenant.TenantContext;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Service
-@RequiredArgsConstructor
+
 public class ManageClassroomService extends BaseTenantService<Classroom> implements ManageClassroomUseCase {
     private final ClassroomRepositoryPort repository;
+
+    public ManageClassroomService(ClassroomRepositoryPort repository) {
+        this.repository = repository;
+    }
 
     @Override
     protected BaseTenantRepositoryPort<Classroom> getRepository() {

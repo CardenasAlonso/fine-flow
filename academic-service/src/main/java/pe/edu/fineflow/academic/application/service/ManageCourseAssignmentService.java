@@ -1,7 +1,5 @@
 package pe.edu.fineflow.academic.application.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pe.edu.fineflow.academic.application.port.in.ManageCourseAssignmentUseCase;
 import pe.edu.fineflow.academic.domain.model.CourseAssignment;
 import pe.edu.fineflow.academic.domain.port.out.CourseAssignmentRepositoryPort;
@@ -10,10 +8,12 @@ import pe.edu.fineflow.common.service.BaseTenantService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Service
-@RequiredArgsConstructor
 public class ManageCourseAssignmentService extends BaseTenantService<CourseAssignment> implements ManageCourseAssignmentUseCase {
     private final CourseAssignmentRepositoryPort repository;
+
+    public ManageCourseAssignmentService(CourseAssignmentRepositoryPort repository) {
+        this.repository = repository;
+    }
 
     @Override
     protected BaseTenantRepositoryPort<CourseAssignment> getRepository() {
