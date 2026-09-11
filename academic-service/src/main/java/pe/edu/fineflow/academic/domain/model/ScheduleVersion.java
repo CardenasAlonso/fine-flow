@@ -2,21 +2,22 @@ package pe.edu.fineflow.academic.domain.model;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ScheduleVersion extends BaseDomainEntity {
+
+    public enum Status { DRAFT, REVIEW, ACTIVE, ARCHIVED }
+
     private String schoolYearId;
     private String academicPeriodId;
     private String versionName;
-    private String status;
+    private Status status;
     private String notes;
     private String createdBy;
     private String approvedBy;
@@ -25,4 +26,34 @@ public class ScheduleVersion extends BaseDomainEntity {
     private LocalDate validFrom;
     private LocalDate validUntil;
     private Instant updatedAt;
+
+    public void markAsReview() {
+        if (this.status != Status.DRAFT) {
+            throw new IllegalStateException("Solo los horarios en DRAFT pueden enviarse a revisión");
+        }
+        this.status = Status.REVIEW;
+        this.updatedAt = Instant.now();
+    }
+
+    public void publish() {
+        if (this.status != Status.DRAFT && this.status != Status.REVIEW) {
+            throw new IllegalStateException("Solo se pueden publicar horarios en estado DRAFT o REVIEW");
+        }
+        this.status = Status.ACTIVE;
+        this.publishedAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    public void archive() {
+        this.status = Status.ARCHIVED;
+        this.updatedAt = Instant.now();
+    }
+
+    public boolean isModifiable() {
+        return this.status != Status.ACTIVE;
+    }
+
+    public boolean isActive() {
+        return this.status == Status.ACTIVE;
+    }
 }

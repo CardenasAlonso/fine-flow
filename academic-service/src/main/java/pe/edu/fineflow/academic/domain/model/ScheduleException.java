@@ -3,13 +3,13 @@ package pe.edu.fineflow.academic.domain.model;
 import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleException extends BaseDomainEntity {

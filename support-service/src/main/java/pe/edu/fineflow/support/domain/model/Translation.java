@@ -1,13 +1,13 @@
 package pe.edu.fineflow.support.domain.model;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Translation {
     private String id;
     private String transKey;

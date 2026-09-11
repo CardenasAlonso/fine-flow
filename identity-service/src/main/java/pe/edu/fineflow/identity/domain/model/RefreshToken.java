@@ -1,27 +1,16 @@
 package pe.edu.fineflow.identity.domain.model;
 
 import java.time.Instant;
-import java.time.Instant;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class RefreshToken extends BaseDomainEntity {
-    public RefreshToken(String id, String schoolId, Instant createdAt, String userId, String tokenHash, String jti, String deviceInfo, String ipAddress, Instant revokedAt, String revokeReason, Instant expiresAt) {
-        this.id = id;
-        this.schoolId = schoolId;
-        this.createdAt = createdAt;
-        this.userId = userId;
-        this.tokenHash = tokenHash;
-        this.jti = jti;
-        this.deviceInfo = deviceInfo;
-        this.ipAddress = ipAddress;
-        this.revokedAt = revokedAt;
-        this.revokeReason = revokeReason;
-        this.expiresAt = expiresAt;
-    }
+
     private String userId;
     private String tokenHash;
     private String jti;
@@ -30,4 +19,43 @@ public class RefreshToken extends BaseDomainEntity {
     private Instant revokedAt;
     private String revokeReason;
     private Instant expiresAt;
+
+    public static RefreshToken create(String userId, String schoolId, String tokenHash,
+                                       String jti, Instant expiresAt) {
+        RefreshToken token = new RefreshToken();
+        token.setUserId(userId);
+        token.setSchoolId(schoolId);
+        token.setTokenHash(tokenHash);
+        token.setJti(jti);
+        token.setExpiresAt(expiresAt);
+        return token;
+    }
+
+    public RefreshToken renew(String newTokenHash, String newJti, Instant newExpiresAt) {
+        RefreshToken renewed = new RefreshToken();
+        renewed.setSchoolId(this.schoolId);
+        renewed.setUserId(this.userId);
+        renewed.setTokenHash(newTokenHash);
+        renewed.setJti(newJti);
+        renewed.setDeviceInfo(this.deviceInfo);
+        renewed.setIpAddress(this.ipAddress);
+        renewed.setExpiresAt(newExpiresAt);
+        return renewed;
+    }
+
+    public boolean isExpired() {
+        return this.expiresAt != null && this.expiresAt.isBefore(Instant.now());
+    }
+
+    public boolean isRevoked() {
+        return this.revokedAt != null;
+    }
+
+    public boolean isValid() {
+        return !isRevoked() && !isExpired();
+    }
+
+    public void revoke() {
+        this.revokedAt = Instant.now();
+    }
 }

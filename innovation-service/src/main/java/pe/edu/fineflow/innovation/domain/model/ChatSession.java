@@ -1,13 +1,13 @@
 package pe.edu.fineflow.innovation.domain.model;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ChatSession {
     private String id;
     private String schoolId;
@@ -18,4 +18,13 @@ public class ChatSession {
     private Instant lastMessageAt;
     private Instant endedAt;
     private Integer isActive;
+
+    public boolean isActiveSession() {
+        return isActive != null && isActive == 1 && endedAt == null;
+    }
+
+    public void end() {
+        this.isActive = 0;
+        this.endedAt = Instant.now();
+    }
 }

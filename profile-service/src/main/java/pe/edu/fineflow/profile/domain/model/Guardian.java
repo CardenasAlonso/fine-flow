@@ -1,11 +1,13 @@
 package pe.edu.fineflow.profile.domain.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Guardian extends BaseDomainEntity {

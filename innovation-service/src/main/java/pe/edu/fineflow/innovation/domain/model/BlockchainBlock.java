@@ -1,27 +1,14 @@
 package pe.edu.fineflow.innovation.domain.model;
 
-import java.time.Instant;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class BlockchainBlock extends BaseDomainEntity {
-    public BlockchainBlock(String id, String schoolId, Instant createdAt, String eventType, String entityId,
-            String entityType, String payload, String previousHash, String hash, String createdBy, int blockIndex) {
-        this.id = id;
-        this.schoolId = schoolId;
-        this.createdAt = createdAt;
-        this.eventType = eventType;
-        this.entityId = entityId;
-        this.entityType = entityType;
-        this.payload = payload;
-        this.previousHash = previousHash;
-        this.hash = hash;
-        this.createdBy = createdBy;
-        this.blockIndex = blockIndex;
-    }
 
     private String eventType;
     private String entityId;
@@ -31,4 +18,19 @@ public class BlockchainBlock extends BaseDomainEntity {
     private String hash;
     private String createdBy;
     private int blockIndex;
+
+    public static BlockchainBlock genesis(String schoolId, String createdBy) {
+        BlockchainBlock block = new BlockchainBlock();
+        block.setSchoolId(schoolId);
+        block.setCreatedBy(createdBy);
+        block.setBlockIndex(0);
+        block.setEventType("GENESIS");
+        block.setPreviousHash("0");
+        block.setHash("0");
+        return block;
+    }
+
+    public boolean hasValidChainLink(String previousBlockHash) {
+        return this.previousHash.equals(previousBlockHash);
+    }
 }

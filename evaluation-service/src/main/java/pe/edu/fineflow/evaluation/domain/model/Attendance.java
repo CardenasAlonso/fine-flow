@@ -1,14 +1,14 @@
 package pe.edu.fineflow.evaluation.domain.model;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Attendance extends BaseDomainEntity {
     private String studentId;
     private String courseAssignmentId;

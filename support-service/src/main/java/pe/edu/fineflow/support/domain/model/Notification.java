@@ -1,14 +1,14 @@
 package pe.edu.fineflow.support.domain.model;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Notification extends BaseDomainEntity {
     private String userId;
     private String targetRole;
@@ -20,4 +20,13 @@ public class Notification extends BaseDomainEntity {
     private Integer isRead;
     private Instant readAt;
     private Instant expiresAt;
+
+    public void markAsRead() {
+        this.isRead = 1;
+        this.readAt = Instant.now();
+    }
+
+    public boolean isExpired() {
+        return expiresAt != null && expiresAt.isBefore(Instant.now());
+    }
 }

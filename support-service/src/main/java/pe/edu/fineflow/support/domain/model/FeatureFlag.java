@@ -1,14 +1,14 @@
 package pe.edu.fineflow.support.domain.model;
 
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class FeatureFlag extends BaseDomainEntity {
     private String featureName;
     private Integer enabled;
@@ -16,4 +16,12 @@ public class FeatureFlag extends BaseDomainEntity {
     private String planRequired;
     private Integer rolloutPct;
     private Instant expiresAt;
+
+    public boolean isEnabled() {
+        return enabled != null && enabled == 1;
+    }
+
+    public boolean isExpired() {
+        return expiresAt != null && expiresAt.isBefore(Instant.now());
+    }
 }

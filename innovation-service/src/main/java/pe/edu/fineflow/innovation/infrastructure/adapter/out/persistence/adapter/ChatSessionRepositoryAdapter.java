@@ -69,16 +69,17 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
     }
 
     private ChatSession toSessionModel(ChatSessionEntity e) {
-        return new ChatSession(
-                e.getId(),
-                e.getSchoolId(),
-                e.getUserId(),
-                e.getUserRole(),
-                e.getSessionToken(),
-                e.getStartedAt(),
-                e.getLastMessageAt(),
-                e.getEndedAt(),
-                e.getIsActive());
+        ChatSession m = new ChatSession();
+        m.setId(e.getId());
+        m.setSchoolId(e.getSchoolId());
+        m.setUserId(e.getUserId());
+        m.setUserRole(e.getUserRole());
+        m.setSessionToken(e.getSessionToken());
+        m.setStartedAt(e.getStartedAt());
+        m.setLastMessageAt(e.getLastMessageAt());
+        m.setEndedAt(e.getEndedAt());
+        m.setIsActive(e.getIsActive());
+        return m;
     }
 
     private ChatMessageEntity toMessageEntity(ChatMessage m) {
@@ -95,14 +96,15 @@ public class ChatSessionRepositoryAdapter implements ChatSessionRepositoryPort {
     }
 
     private ChatMessage toMessageModel(ChatMessageEntity e) {
-        return new ChatMessage(
-                e.getId(),
-                e.getSchoolId(),
-                e.getSessionId(),
-                e.getRole(),
-                e.getContent(),
-                e.getSourcesJson(),
-                e.getConfidence(),
-                e.getCreatedAt());
+        ChatMessage m = new ChatMessage();
+        m.setId(e.getId());
+        m.setSchoolId(e.getSchoolId());
+        m.setSessionId(e.getSessionId());
+        m.setRole(e.getRole());
+        m.setContent(e.getContent());
+        m.setSourcesJson(e.getSourcesJson());
+        m.setConfidence(e.getConfidence());
+        m.setCreatedAt(e.getCreatedAt());
+        return m;
     }
 }

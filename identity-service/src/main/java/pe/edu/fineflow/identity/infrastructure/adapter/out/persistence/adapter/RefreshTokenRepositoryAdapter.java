@@ -100,17 +100,14 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     }
 
     private RefreshToken toModel(RefreshTokenEntity e) {
-        return new RefreshToken(
-                e.getId(),
-                e.getSchoolId(),
-                e.getCreatedAt(),
-                e.getUserId(),
-                e.getTokenHash(),
-                e.getJti(),
-                e.getDeviceInfo(),
-                e.getIpAddress(),
-                e.getRevokedAt(),
-                e.getRevokeReason(),
-                e.getExpiresAt());
+        RefreshToken m = RefreshToken.create(
+                e.getUserId(), e.getSchoolId(), e.getTokenHash(), e.getJti(), e.getExpiresAt());
+        m.setId(e.getId());
+        m.setDeviceInfo(e.getDeviceInfo());
+        m.setIpAddress(e.getIpAddress());
+        m.setRevokedAt(e.getRevokedAt());
+        m.setRevokeReason(e.getRevokeReason());
+        m.setCreatedAt(e.getCreatedAt());
+        return m;
     }
 }

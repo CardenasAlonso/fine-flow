@@ -36,12 +36,12 @@ public class ReportJobRepositoryAdapter implements ReportJobRepositoryPort {
     }
 
     @Override
-    public Mono<Void> updateStatus(String id, String status, int progress, String filePath) {
+    public Mono<Void> updateStatus(String id, ReportJob.Status status, int progress, String filePath) {
         return repository
                 .findById(id)
                 .flatMap(
                         e -> {
-                            e.setStatus(status);
+                            e.setStatus(status.name());
                             e.setProgressPct(progress);
                             e.setFilePath(filePath);
                             return repository.save(e);
@@ -57,7 +57,7 @@ public class ReportJobRepositoryAdapter implements ReportJobRepositoryPort {
         e.setReportType(m.getReportType());
         e.setFormat(m.getFormat());
         e.setParametersJson(m.getParametersJson());
-        e.setStatus(m.getStatus());
+        e.setStatus(m.getStatus() != null ? m.getStatus().name() : null);
         e.setFilePath(m.getFilePath());
         e.setErrorDetail(m.getErrorDetail());
         e.setFileSizeKb(m.getFileSizeKb());
@@ -71,22 +71,23 @@ public class ReportJobRepositoryAdapter implements ReportJobRepositoryPort {
     }
 
     private ReportJob toModel(ReportJobEntity e) {
-        return new ReportJob(
-                e.getId(),
-                e.getSchoolId(),
-                e.getRequestedBy(),
-                e.getReportType(),
-                e.getFormat(),
-                e.getParametersJson(),
-                e.getStatus(),
-                e.getFilePath(),
-                e.getErrorDetail(),
-                e.getFileSizeKb(),
-                e.getProgressPct(),
-                e.getRequestedAt(),
-                e.getStartedAt(),
-                e.getCompletedAt(),
-                e.getExpiresAt(),
-                e.getDownloadCount());
+        ReportJob m = new ReportJob();
+        m.setId(e.getId());
+        m.setSchoolId(e.getSchoolId());
+        m.setRequestedBy(e.getRequestedBy());
+        m.setReportType(e.getReportType());
+        m.setFormat(e.getFormat());
+        m.setParametersJson(e.getParametersJson());
+        m.setStatus(e.getStatus() != null ? ReportJob.Status.valueOf(e.getStatus()) : null);
+        m.setFilePath(e.getFilePath());
+        m.setErrorDetail(e.getErrorDetail());
+        m.setFileSizeKb(e.getFileSizeKb());
+        m.setProgressPct(e.getProgressPct());
+        m.setRequestedAt(e.getRequestedAt());
+        m.setStartedAt(e.getStartedAt());
+        m.setCompletedAt(e.getCompletedAt());
+        m.setExpiresAt(e.getExpiresAt());
+        m.setDownloadCount(e.getDownloadCount());
+        return m;
     }
 }

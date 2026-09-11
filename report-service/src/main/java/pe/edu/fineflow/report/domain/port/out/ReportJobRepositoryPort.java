@@ -13,5 +13,5 @@ public interface ReportJobRepositoryPort {
 
     Flux<ReportJob> findPending();
 
-    Mono<Void> updateStatus(String id, String status, int progress, String filePath);
+    Mono<Void> updateStatus(String id, ReportJob.Status status, int progress, String filePath);
 }

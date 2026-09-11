@@ -2,15 +2,16 @@ package pe.edu.fineflow.academic.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ClassTask extends BaseDomainEntity {
+
     private String courseAssignmentId;
     private String competencyId;
     private String academicPeriodId;
@@ -20,4 +21,12 @@ public class ClassTask extends BaseDomainEntity {
     private BigDecimal maxScore;
     private LocalDate dueDate;
     private Integer isActive;
+
+    public void activate() {
+        this.isActive = 1;
+    }
+
+    public boolean isOverdue() {
+        return dueDate != null && dueDate.isBefore(LocalDate.now());
+    }
 }

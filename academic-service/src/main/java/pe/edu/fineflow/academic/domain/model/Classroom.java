@@ -1,16 +1,15 @@
 package pe.edu.fineflow.academic.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Classroom extends BaseDomainEntity {
+
     private String name;
     private String roomType;
     private Integer capacity;
@@ -20,4 +19,12 @@ public class Classroom extends BaseDomainEntity {
     private Integer hasComputers;
     private Integer isActive;
     private String notes;
+
+    public void activate() {
+        this.isActive = 1;
+    }
+
+    public boolean isAvailable(int currentUsage) {
+        return capacity != null && currentUsage < capacity;
+    }
 }

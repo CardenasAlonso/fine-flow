@@ -1,16 +1,15 @@
 package pe.edu.fineflow.academic.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pe.edu.fineflow.common.model.BaseDomainEntity;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class TimeSlot extends BaseDomainEntity {
+
     private Integer slotNumber;
     private String slotName;
     private String startTime;
@@ -18,4 +17,12 @@ public class TimeSlot extends BaseDomainEntity {
     private Integer durationMin;
     private String slotType;
     private Integer isActive;
+
+    public boolean isBreak() {
+        return "BREAK".equalsIgnoreCase(this.slotType);
+    }
+
+    public void activate() {
+        this.isActive = 1;
+    }
 }
