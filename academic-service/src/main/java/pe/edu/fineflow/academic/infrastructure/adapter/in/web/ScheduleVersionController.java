@@ -85,7 +85,7 @@ public class ScheduleVersionController {
                 sv.getSchoolYearId(),
                 sv.getAcademicPeriodId(),
                 sv.getVersionName(),
-                sv.getStatus(),
+                sv.getStatus() == null ? null : sv.getStatus().name(),
                 sv.getNotes(),
                 sv.getCreatedBy(),
                 sv.getApprovedBy(),
